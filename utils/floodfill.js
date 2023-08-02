@@ -26,6 +26,7 @@ export const getColorAtPixel = (imageData, x, y) => {
   };
 };
 
+// Flood Fill Algorithm
 export const floodFill = (imageData, newColor, x, y) => {
   const {width, height} = imageData;
   const stack = [];

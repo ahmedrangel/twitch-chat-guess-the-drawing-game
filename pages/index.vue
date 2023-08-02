@@ -1,59 +1,71 @@
 <template>
   <main class="my-2 centered-content">
-    <div class="row row-cols-2 g-4">
-      <div class="col-4">
-        <div class="row row-cols-1 g-0">
-          <div class="col twitch-chat overflow-hidden d-flex justify-content-end flex-column">
-            <p v-for="(chat, index) of comment" :key="index" class="col-12 my-1">
-              <b>{{ chat.display_name }}:</b> {{ chat.message }}
-            </p>
-          </div>
-          <div class="col text-center board-tools d-flex align-items-center justify-content-center">
-            <div>
-              <div class="my-4">
-                <button class="btn btn-primary mx-2" @click="mode(`pen`)">
-                  <span class="m-0 h3 d-flex align-items-center justify-content-center">
-                    <Icon class="iconify" name="ph:pencil-simple-duotone" />
-                  </span>
-                </button>
-                <button class="btn btn-primary mx-2" @click="mode(`eraser`)">
-                  <span class="m-0 h3 d-flex align-items-center justify-content-center">
-                    <Icon class="iconify" name="ph:eraser-duotone" />
-                  </span>
-                </button>
-                <button class="btn btn-primary mx-2" @click="mode(`bucket`)">
-                  <span class="m-0 h3 d-flex align-items-center justify-content-center">
-                    <Icon class="iconify" name="ph:paint-bucket-duotone" />
-                  </span>
-                </button>
-              </div>
-              <div class="my-4 d-flex ranges justify-content-center">
-                <input type="range" class="js-line-range mx-2" min="5" max="120" step="5" @input="getLineSize($event)">
-                <div class="dot-preview d-flex align-items-center justify-content-center mx-2">
-                  <div class="dot d-flex" :style="`height:${lineSize}px; width: ${lineSize}px; background-color: ${color}`" />
+    <div id="app"
+         @keydown="keydown($event)"
+         @keyup="keyup($event)"
+    >
+      <div class="row row-cols-2 g-4">
+        <div class="col-4">
+          <div class="row row-cols-1 g-0">
+            <div id="twitch-chat" class="col overflow-hidden d-flex justify-content-end flex-column">
+              <p v-for="(chat, index) of comment" :key="index" class="col-12 my-1">
+                <b>{{ chat.display_name }}:</b> {{ chat.message }}
+              </p>
+            </div>
+            <div class="col text-center board-tools d-flex align-items-center justify-content-center">
+              <div>
+                <div id="tools" class="my-4">
+                  <button class="btn btn-primary mx-2" @click="mode(`pen`)">
+                    <span class="m-0 h3 d-flex align-items-center justify-content-center">
+                      <Icon class="iconify" name="ph:pencil-simple-duotone" />
+                    </span>
+                  </button>
+                  <button class="btn btn-primary mx-2" @click="mode(`brush`)">
+                    <span class="m-0 h3 d-flex align-items-center justify-content-center">
+                      <Icon class="iconify" name="ph:paint-brush" />
+                    </span>
+                  </button>
+                  <button class="btn btn-primary mx-2" @click="mode(`eraser`)">
+                    <span class="m-0 h3 d-flex align-items-center justify-content-center">
+                      <Icon class="iconify" name="ph:eraser-duotone" />
+                    </span>
+                  </button>
+                  <button class="btn btn-primary mx-2" @click="mode(`bucket`)">
+                    <span class="m-0 h3 d-flex align-items-center justify-content-center">
+                      <Icon class="iconify" name="ph:paint-bucket-duotone" />
+                    </span>
+                  </button>
+                  <button class="btn btn-primary mx-2" @click="mode(`clear`)">
+                    <span class="m-0 h3 d-flex align-items-center justify-content-center">
+                      <Icon class="iconify" name="ph:trash-duotone" />
+                    </span>
+                  </button>
                 </div>
-              </div>
-              <div class="my-4 palette d-flex">
-                <span v-for="(c, index) of defaultColors()" :key="index" class="black mx-1" :style="`background-color:${c};`" @click="setColor(c)" />
-                <input type="color" class="js-color-picker color-picker mx-1" :value="color" @input="getStrokeColor($event)">
+                <div class="my-4 d-flex ranges justify-content-center">
+                  <input v-model="lineSize" type="range" class="mx-2" min="5" max="120" step="5" @input="getLineSize($event)">
+                  <div class="dot-preview d-flex align-items-center justify-content-center mx-2">
+                    <label class="dot d-flex" :style="`height:${lineSize}px; width: ${lineSize}px; background-color: ${color}`" />
+                  </div>
+                </div>
+                <div class="my-4 palette d-flex">
+                  <span v-for="(c, index) of defaultColors()" :key="index" class="black mx-1" :style="`background-color:${c};`" @click="setColor(c)" />
+                  <input type="color" class="color-picker mx-1" :value="color" @input="getStrokeColor($event)">
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="col-8">
-        <canvas
-          ref="canvas"
-          tabindex="0"
-          class="js-paint paint-canvas"
-          width="1230"
-          height="912"
-          @mousedown="startDrawing($event)"
-          @mousemove="drawLine($event)"
-          @mouseup="stopDrawing()"
-          @keydown="keydown($event)"
-          @keyup="keyup($event)"
-        />
+        <div class="col-8">
+          <canvas ref="canvas"
+                  tabindex="0"
+                  class="paint-canvas"
+                  width="1230"
+                  height="912"
+                  @mousedown="startDrawing($event)"
+                  @mousemove="drawLine($event)"
+                  @mouseup="stopDrawing()"
+          />
+        </div>
       </div>
     </div>
   </main>
@@ -63,7 +75,7 @@ export default {
   data() {
     return {
       client: null,
-      chat_limit: 14,
+      chat_limit: 12,
       comment: [],
       color: "#000000",
       x: 0,
@@ -78,35 +90,27 @@ export default {
       toolMode: "pen",
       lineSize: 5,
       tmi: this.$nuxt.$tmi,
-      userClient: null
+      userClient: null,
+      points: 1,
     };
-  },
-  beforeMount () {
-    this.adjustScale();
   },
   beforeUnmount() {
     this.client.disconnect();
+    window.removeEventListener("resize", this.adjustScale);
   },
   mounted () {
     this.userClient = "xqc";
+    this.adjustScale();
     this.client = new this.tmi.Client({
-      connection: {
-        secure: true,
-        reconnect: true,
-        port: 8080
-      },
+      connection: { secure: true, reconnect: true },
       channels: [this.userClient], // Twitch Channel Test
     });
     this.client.connect();
     this.client.on("message", (channel, tags, message) => {
-      if (this.comment.length >= this.chat_limit) {
-        this.comment.shift();
-      }
+      this.comment.length >= this.chat_limit ? this.comment.shift() : null;
       this.comment.push({display_name: tags["display-name"], message: message});
     });
-
     this.drawingBoard();
-
     window.addEventListener("resize", this.adjustScale);
   },
   methods: {
@@ -116,7 +120,7 @@ export default {
     },
     getLineSize(event) {
       this.lineSize = event.target.value;
-      this.ctx.lineWidth = this.lineSize; 
+      this.toolMode == "brush" ? this.ctx.lineWidth = parseInt(this.lineSize) * 0.02 : this.ctx.lineWidth = this.lineSize; 
     },
     setColor(color) {
       this.color = color;
@@ -124,13 +128,16 @@ export default {
       console.info(this.color);
     },
     startDrawing (event) {
-      if (this.toolMode == "pen" || this.toolMode == "eraser") {
+      if (this.toolMode == "pen" || this.toolMode == "eraser" || this.toolMode == "brush") {
         this.toolMode == "eraser" ? this.ctx.globalCompositeOperation="destination-out" : this.ctx.globalCompositeOperation="source-over";
+        this.toolMode == "brush" ? this.points = parseInt(this.lineSize) + 4 : this.points = 1;
         this.drawing = true;   
         [this.x, this.y] = [event.offsetX, event.offsetY];
         this.ctx.beginPath();
-        this.ctx.arc(this.x,this.y,0,0,Math.PI*2,false);
-        this.ctx.fillStyle = this.color;
+        for (let i = 0; i < this.points; i ++) {
+          this.ctx.rect(this.x + i,this.y + i,0,0,Math.PI*2,false);
+        } 
+        this.ctx.rect(this.x,this.y,0,0,Math.PI*2,false);
         this.ctx.fill();
         this.ctx.stroke();
         this.ctx.globalCompositeOperation="source-over";
@@ -148,23 +155,25 @@ export default {
       this.drawing = false;
       this.undoHistory.push(this.$refs.canvas.toDataURL());
       this.redoHistory = [];
+      console.log(this.undoHistory);
     },
     drawLine(event) {
       if (this.drawing) {
         this.toolMode == "eraser" ? this.ctx.globalCompositeOperation="destination-out" : this.ctx.globalCompositeOperation="source-over";
-        const newX = event.offsetX;
-        const newY = event.offsetY;
         this.ctx.beginPath();
-        this.ctx.moveTo(this.x, this.y);
-        this.ctx.lineTo(newX, newY);
+        for (let i = 0; i < this.points; i++) {
+          this.ctx.moveTo(this.x + i, this.y + i);
+          this.ctx.lineTo(event.offsetX + i, event.offsetY + i);
+        } 
         this.ctx.stroke();
-        this.x = newX;
-        this.y = newY;
+        this.x = event.offsetX;
+        this.y = event.offsetY;
         this.ctx.globalCompositeOperation="source-over";
       }
     },
     undo () {
       const lastState = this.undoHistory.pop();
+      console.log(this.undoHistory);
       if (lastState) {
         this.redoHistory.push(lastState);
         const undoState = this.undoHistory[this.undoHistory.length - 1];
@@ -212,6 +221,17 @@ export default {
     },
     mode(mode) {
       this.toolMode = mode;
+      this.toolMode == "brush" ? this.ctx.lineWidth = parseInt(this.lineSize) * 0.02 : this.ctx.lineWidth = this.lineSize;
+      if (this.toolMode == "clear") {
+        this.toolMode = "pen";
+        this.ctx.globalCompositeOperation="destination-out";
+        this.ctx.beginPath();
+        this.ctx.rect(1,1,this.$refs.canvas.width,this.$refs.canvas.height,Math.PI*2,false);
+        this.ctx.fill();
+        this.ctx.stroke();
+        this.ctx.globalCompositeOperation="source-over";
+        this.stopDrawing();
+      }
     },
     drawingBoard() {
       this.ctx = this.$refs.canvas.getContext("2d", {willReadFrequently: true});
@@ -226,7 +246,8 @@ export default {
       const scaleX = currentWidth / referenceWidth;
       const scaleY = currentHeight / referenceHeight;
       const scale = Math.min(scaleX, scaleY);
-      document.body.style.transform = `translate(-50%, -50%) 	scale(${scale})`;
+      const app = document.getElementById("app");
+      app.style.transform = `translate(-50%, -50%) scale(${scale})`;
     }
   }
 };
