@@ -91,6 +91,9 @@ export default {
         reconnect: true,
       },
       channels: ["xqc"], // Twitch Channel Test
+      options: {
+        port: 8080
+      }
     });
     client.connect();
     client.on("message", (channel, tags, message) => {
