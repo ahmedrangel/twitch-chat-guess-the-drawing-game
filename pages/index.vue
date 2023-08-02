@@ -42,6 +42,16 @@
                       <Icon class="iconify" name="ph:trash-duotone" />
                     </span>
                   </button>
+                  <button class="btn btn-primary ms-5 me-1" @click="undo">
+                    <span class="m-0 h3 d-flex align-items-center justify-content-center">
+                      <Icon class="iconify" name="ph:arrow-bend-up-left-bold" />
+                    </span>
+                  </button>
+                  <button class="btn btn-primary mx-1" @click="redo">
+                    <span class="m-0 h3 d-flex align-items-center justify-content-center">
+                      <Icon class="iconify" name="ph:arrow-bend-up-right-bold" />
+                    </span>
+                  </button>
                 </div>
                 <div class="my-4 d-flex ranges justify-content-center">
                   <input v-model="lineSize" type="range" class="mx-2" min="5" max="110" step="5" @input="getLineSize">

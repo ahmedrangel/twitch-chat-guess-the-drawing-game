@@ -76,3 +76,7 @@ input[type=range] {
 #tools span {
   font-size: 3.5rem!important;
 }
+
+#tools .btn {
+  padding: 4px;
+}
