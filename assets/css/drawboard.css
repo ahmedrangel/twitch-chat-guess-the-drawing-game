@@ -1,0 +1,66 @@
+.paint-canvas {
+  border: 1px black solid;
+  display: block;
+}
+
+canvas {
+  border-radius: 10px;
+  height: 912px;
+  width: 1230px;
+}
+
+.twitch-chat {  
+  background-color: #d5baff;
+  height: 456px;
+}
+
+.board-tools {
+  background-color: #fff5ba;
+  height: 456px;
+}
+body {
+  position: absolute;
+  top: 50%;
+  left: 51%;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  width: 1920px;
+  overflow: hidden;
+}
+
+.ranges {
+  height: 120px;
+}
+.dot {
+  content: '';
+  border-radius: 50%;
+  border: 1px solid #00000036;
+  background-color: #000000;
+ }
+
+.dot-preview {
+  height: 120px;
+  width: 120px;
+}
+
+.palette span {
+  border-radius: 4px;
+  border: 2px solid #000;
+  cursor: pointer;
+  width: 32px;
+  height: 45px;
+}
+
+.palette input {
+  border-radius: 4px;
+  border: 2px solid #000;
+  cursor: pointer;
+  width: 64px;
+  height: 45px;
+}
+
+input[type=range] {
+  width: 70%;
+}
