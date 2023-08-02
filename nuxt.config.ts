@@ -6,5 +6,6 @@ export default ({
   ],
   modules: [
     "nuxt-icon"
-  ]
+  ],
+  ssr: true
 });
