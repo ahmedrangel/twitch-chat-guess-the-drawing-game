@@ -1,8 +1,8 @@
 <template>
   <main id="app" class="my-2 centered-content">
     <div id="game"
-         @keydown="keydown($event)"
-         @keyup="keyup($event)"
+         @keydown="keydown"
+         @keyup="keyup"
     >
       <div class="row row-cols-2 g-4">
         <div class="col-4">
@@ -44,14 +44,14 @@
                   </button>
                 </div>
                 <div class="my-4 d-flex ranges justify-content-center">
-                  <input v-model="lineSize" type="range" class="mx-2" min="5" max="120" step="5" @input="getLineSize($event)">
+                  <input v-model="lineSize" type="range" class="mx-2" min="5" max="110" step="5" @input="getLineSize">
                   <div class="dot-preview d-flex align-items-center justify-content-center mx-2">
                     <label class="dot d-flex" :style="`height:${lineSize}px; width: ${lineSize}px; background-color: ${color}`" />
                   </div>
                 </div>
                 <div class="my-4 palette d-flex">
                   <span v-for="(c, index) of defaultColors()" :key="index" class="black mx-1" :style="`background-color:${c};`" @click="setColor(c)" />
-                  <input type="color" class="color-picker mx-1" :value="color" @input="getStrokeColor($event)">
+                  <input type="color" class="color-picker mx-1" :value="color" @input="getStrokeColor">
                 </div>
               </div>
             </div>
@@ -135,7 +135,6 @@ export default {
     },
     startDrawing (event, type) {
       let x, y;
-      console.log(event);
       if (type == "touch") {
         const rect = event.target.getBoundingClientRect();
         const rect_x = event.changedTouches[0].pageX - rect.left;
@@ -172,7 +171,6 @@ export default {
       this.drawing = false;
       this.undoHistory.push(this.$refs.canvas.toDataURL());
       this.redoHistory = [];
-      console.log(this.undoHistory);
     },
     drawLine(event, type) {
       let x, y;
@@ -201,7 +199,6 @@ export default {
     },
     undo () {
       const lastState = this.undoHistory.pop();
-      console.log(this.undoHistory);
       if (lastState) {
         this.redoHistory.push(lastState);
         const undoState = this.undoHistory[this.undoHistory.length - 1];
@@ -248,10 +245,9 @@ export default {
       event.key.toLowerCase() == "z" ? this.z = false : null;
     },
     mode(mode) {
-      this.toolMode = mode;
+      mode !== "clear" ? this.toolMode = mode : null;
       this.toolMode == "brush" ? this.ctx.lineWidth = parseInt(this.lineSize) * 0.02 : this.ctx.lineWidth = this.lineSize;
-      if (this.toolMode == "clear") {
-        this.toolMode = "pen";
+      if (mode == "clear") {
         this.ctx.globalCompositeOperation="destination-out";
         this.ctx.beginPath();
         this.ctx.rect(1,1,this.$refs.canvas.width,this.$refs.canvas.height,Math.PI*2,false);

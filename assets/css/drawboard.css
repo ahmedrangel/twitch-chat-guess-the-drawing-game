@@ -39,7 +39,7 @@ body {
 }
 
 .ranges {
-  height: 120px;
+  height: 110px;
 }
 .dot {
   content: '';
@@ -49,8 +49,8 @@ body {
  }
 
 .dot-preview {
-  height: 120px;
-  width: 120px;
+  height: 110px;
+  width: 110px;
 }
 
 .palette span {
