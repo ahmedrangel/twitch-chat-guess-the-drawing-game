@@ -7,5 +7,5 @@ export default ({
   modules: [
     "nuxt-icon"
   ],
-  ssr: true
+  ssr: false
 });
