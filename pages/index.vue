@@ -62,6 +62,7 @@
 export default {
   data() {
     return {
+      client: null,
       chat_limit: 14,
       comment: [],
       color: "#000000",
@@ -74,27 +75,30 @@ export default {
       ctrl: false,
       shift: false,
       z: false,
-      penMode: true,
-      bucketMode: false,
-      eraserMode: false,
+      toolMode: "pen",
       lineSize: 5,
+      tmi: this.$nuxt.$tmi,
+      userClient: null
     };
   },
   beforeMount () {
     this.adjustScale();
   },
+  beforeUnmount() {
+    this.client.disconnect();
+  },
   mounted () {
-    const tmi = this.$nuxt.$tmi;
-    const client = new tmi.Client({
+    this.userClient = "xqc";
+    this.client = new this.tmi.Client({
       connection: {
         secure: true,
         reconnect: true,
         port: 8080
       },
-      channels: ["xqc"], // Twitch Channel Test
+      channels: [this.userClient], // Twitch Channel Test
     });
-    client.connect();
-    client.on("message", (channel, tags, message) => {
+    this.client.connect();
+    this.client.on("message", (channel, tags, message) => {
       if (this.comment.length >= this.chat_limit) {
         this.comment.shift();
       }
@@ -120,8 +124,8 @@ export default {
       console.info(this.color);
     },
     startDrawing (event) {
-      if (this.penMode || this.eraserMode) {
-        this.eraserMode ? this.ctx.globalCompositeOperation="destination-out" : this.ctx.globalCompositeOperation="source-over";
+      if (this.toolMode == "pen" || this.toolMode == "eraser") {
+        this.toolMode == "eraser" ? this.ctx.globalCompositeOperation="destination-out" : this.ctx.globalCompositeOperation="source-over";
         this.drawing = true;   
         [this.x, this.y] = [event.offsetX, event.offsetY];
         this.ctx.beginPath();
@@ -147,7 +151,7 @@ export default {
     },
     drawLine(event) {
       if (this.drawing) {
-        this.eraserMode ? this.ctx.globalCompositeOperation="destination-out" : this.ctx.globalCompositeOperation="source-over";
+        this.toolMode == "eraser" ? this.ctx.globalCompositeOperation="destination-out" : this.ctx.globalCompositeOperation="source-over";
         const newX = event.offsetX;
         const newY = event.offsetY;
         this.ctx.beginPath();
@@ -206,20 +210,8 @@ export default {
       event.key == "Shift" ? this.shift = false : null;
       event.key.toLowerCase() == "z" ? this.z = false : null;
     },
-    mode (mode) {
-      if (mode == "pen") {
-        this.penMode = true;
-        this.bucketMode = false;
-        this.eraserMode = false;
-      } else if (mode == "eraser") {
-        this.penMode = false;
-        this.bucketMode = false;
-        this.eraserMode = true;
-      } else if (mode == "bucket") {
-        this.penMode = false;
-        this.bucketMode = true;
-        this.eraserMode = false;
-      }
+    mode(mode) {
+      this.toolMode = mode;
     },
     drawingBoard() {
       this.ctx = this.$refs.canvas.getContext("2d", {willReadFrequently: true});
