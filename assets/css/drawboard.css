@@ -102,7 +102,7 @@ input[type=range] {
   border-radius: 10px;
 }
 
-.btn-active {
+.btn-active, #tools .btn:active {
   color: var(--white)!important;
   border: 3px solid #1a1a1a!important;
   background-color: #1a1a1a!important;
