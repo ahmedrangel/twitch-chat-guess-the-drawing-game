@@ -1,5 +1,5 @@
 <template>
-  <main id="app" class="my-2 centered-content">
+  <main class="my-2 centered-content">
     <div id="game"
          @keydown="keydown"
          @keyup="keyup"
