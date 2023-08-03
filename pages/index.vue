@@ -17,37 +17,37 @@
             <div id="board-tools" class="col text-center d-flex align-items-center justify-content-center p-3">
               <div>
                 <div id="tools" class="my-4">
-                  <button class="btn btn-primary mx-1" @click="mode(`pen`)">
+                  <button :class="`btn me-1 ${toolMode == `pen` ? `btn-active` : ``}`" @click="mode(`pen`)">
                     <span class="m-0 h3 d-flex align-items-center justify-content-center">
                       <Icon class="iconify" name="ph:pencil-simple-duotone" />
                     </span>
                   </button>
-                  <button class="btn btn-primary mx-1" @click="mode(`brush`)">
+                  <button :class="`btn mx-1 ${toolMode == `brush` ? `btn-active` : ``}`" @click="mode(`brush`)">
                     <span class="m-0 h3 d-flex align-items-center justify-content-center">
                       <Icon class="iconify" name="ph:paint-brush" />
                     </span>
                   </button>
-                  <button class="btn btn-primary mx-1" @click="mode(`eraser`)">
+                  <button :class="`btn mx-1 ${toolMode == `eraser` ? `btn-active` : ``}`" @click="mode(`eraser`)">
                     <span class="m-0 h3 d-flex align-items-center justify-content-center">
                       <Icon class="iconify" name="ph:eraser-duotone" />
                     </span>
                   </button>
-                  <button class="btn btn-primary mx-1" @click="mode(`bucket`)">
+                  <button :class="`btn mx-1 ${toolMode == `bucket` ? `btn-active` : ``}`" @click="mode(`bucket`)">
                     <span class="m-0 h3 d-flex align-items-center justify-content-center">
                       <Icon class="iconify" name="ph:paint-bucket-duotone" />
                     </span>
                   </button>
-                  <button class="btn btn-primary mx-1" @click="mode(`clear`)">
+                  <button class="btn mx-1" @click="mode(`clear`)">
                     <span class="m-0 h3 d-flex align-items-center justify-content-center">
                       <Icon class="iconify" name="ph:trash-duotone" />
                     </span>
                   </button>
-                  <button class="btn btn-primary ms-5 me-1" @click="undo">
+                  <button class="btn ms-4 me-1" @click="undo">
                     <span class="m-0 h3 d-flex align-items-center justify-content-center">
                       <Icon class="iconify" name="ph:arrow-bend-up-left-bold" />
                     </span>
                   </button>
-                  <button class="btn btn-primary mx-1" @click="redo">
+                  <button class="btn ms-1" @click="redo">
                     <span class="m-0 h3 d-flex align-items-center justify-content-center">
                       <Icon class="iconify" name="ph:arrow-bend-up-right-bold" />
                     </span>
@@ -67,12 +67,12 @@
             </div>
           </div>
         </div>
-        <div class="col-8">
+        <div class="col-8 p-0 bg-canvas">
           <canvas ref="canvas"
                   tabindex="0"
                   class="paint-canvas d-block"
-                  width="1230"
-                  height="912"
+                  width="1134"
+                  height="872"
                   @mousedown="startDrawing($event, `mouse`)"
                   @mousemove="drawLine($event, `mouse`)"
                   @mouseup="stopDrawing()"
