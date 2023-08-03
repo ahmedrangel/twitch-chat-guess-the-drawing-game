@@ -18,5 +18,14 @@ export default ({
   modules: [
     "nuxt-icon"
   ],
-  ssr: false
+  runtimeConfig: {
+    session: {
+      name: "nuxt-session",
+      password: ""
+    },
+    twitch: {
+      clientId: "",
+      clientSecret: ""
+    }
+  }
 });
