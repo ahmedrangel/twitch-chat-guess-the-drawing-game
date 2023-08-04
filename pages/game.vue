@@ -85,6 +85,8 @@ definePageMeta({ middleware: "session" });
                     @mousedown="startDrawing($event, `mouse`)"
                     @mousemove="drawLine($event, `mouse`)"
                     @mouseup="stopDrawing"
+                    @mouseleave="outControl"
+                    @mouseenter="outControl"
                     @touchstart="startDrawing($event, `touch`)"
                     @touchmove="drawLine($event, `touch`)"
                     @touchend="stopDrawing"
@@ -134,7 +136,9 @@ export default {
       userClient: null,
       points: 1,
       session: useUserSession(),
-      gameStarted: false
+      gameStarted: false,
+      out: false,
+      up: true
     };
   },
   beforeUnmount() {
@@ -142,22 +146,16 @@ export default {
     window.removeEventListener("resize", this.adjustScale);
   },
   mounted () {
-    console.log(this.session.user);
     this.loginClient = this.session.user.login;
     this.userClient = this.session.user.display_name;
     this.adjustScale();
-    this.client = new this.tmi.Client({
-      connection: { secure: true, reconnect: true },
-      channels: [this.userClient], // Twitch Channel Test
-    });
-    this.client.connect();
-    this.client.on("message", (channel, tags, message) => {
-      this.comment.length >= this.chat_limit ? this.comment.shift() : null;
-      this.comment.push({display_name: tags["display-name"], message: message});
-    });
     this.drawingBoard();
     window.addEventListener("resize", this.adjustScale);
     document.body.addEventListener("touchmove", function(e) { e.preventDefault(); }, { passive: false });
+
+    document.addEventListener("mouseup", (event) => {
+      this.outUpControl(event);
+    });
   },
   methods: {
     logout() {
@@ -166,6 +164,15 @@ export default {
     },
     startGame() {
       this.gameStarted = true;
+      this.client = new this.tmi.Client({
+        connection: { secure: true, reconnect: true },
+        channels: [this.userClient], // Twitch Channel Test
+      });
+      this.client.connect();
+      this.client.on("message", (channel, tags, message) => {
+        this.comment.length >= this.chat_limit ? this.comment.shift() : null;
+        this.comment.push({display_name: tags["display-name"], message: message});
+      });
     },
     stopGame() {
       this.gameStarted = false;
@@ -176,6 +183,8 @@ export default {
       this.toolMode = "pen";
       this.color = "#000000";
       this.ctx.strokeStyle = this.color;
+      this.client.disconnect();
+      this.comment = [];
     },
     getStrokeColor(event) {
       this.color = event.target.value;
@@ -211,7 +220,6 @@ export default {
         for (let i = 0; i < this.points; i ++) {
           this.ctx.rect(this.x + i,this.y + i,0,0,Math.PI*2,false);
         } 
-        this.ctx.rect(this.x,this.y,0,0,Math.PI*2,false);
         this.ctx.fill();
         this.ctx.stroke();
         this.ctx.globalCompositeOperation="source-over";
@@ -228,6 +236,14 @@ export default {
       this.drawing = false;
       this.undoHistory.push(this.$refs.canvas.toDataURL());
       this.redoHistory = [];
+    },
+    outControl(event) {
+      event.type == "mouseleave" ? this.out = true : this.out = false;
+    },
+    outUpControl(event) {
+      if (event.type == "mouseup" && this.out == true && this.drawing == true) {
+        this.stopDrawing(event);
+      }
     },
     drawLine(event, type) {
       let x, y;
