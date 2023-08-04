@@ -245,8 +245,11 @@ export default {
       if (event.type == "mouseup" && this.out == true && this.drawing == true) {
         this.stopDrawing(event);
       } else if (event.type == "mousemove" && this.out == true && this.drawing == true) {
-        this.x = event.offsetX - 81;
-        this.y = event.offsetY - 54;
+        const rect = event.target.getBoundingClientRect();
+        const rect_x = event.pageX - rect.left;
+        const rect_y = event.pageY - rect.top;
+        this.x = Math.round((rect_x * event.target.width) / rect.width);
+        this.y = Math.round((rect_y * event.target.height) / rect.height);
       }
     },
     drawLine(event, type) {
