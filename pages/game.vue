@@ -147,6 +147,15 @@ export default {
     window.addEventListener("resize", this.adjustScale);
     this.loginClient = this.session.user.login;
     this.userClient = this.session.user.display_name;
+    this.client = new this.tmi.Client({
+      connection: { secure: true, reconnect: true },
+      channels: [this.userClient], // Twitch Channel
+    });
+    this.client.connect();
+    this.client.on("message", (channel, tags, message) => {
+      this.comment.length >= this.chat_limit ? this.comment.shift() : null;
+      this.comment.push({display_name: tags["display-name"], message: message});
+    });
     this.drawingBoard();
     document.addEventListener("mouseup", (event) => { this.outUpControl(event); });
     document.addEventListener("mousemove", (event) => { this.outUpControl(event); });
@@ -158,15 +167,6 @@ export default {
     },
     startGame() {
       this.gameStarted = true;
-      this.client = new this.tmi.Client({
-        connection: { secure: true, reconnect: true },
-        channels: [this.userClient], // Twitch Channel
-      });
-      this.client.connect();
-      this.client.on("message", (channel, tags, message) => {
-        this.comment.length >= this.chat_limit ? this.comment.shift() : null;
-        this.comment.push({display_name: tags["display-name"], message: message});
-      });
     },
     stopGame() {
       this.gameStarted = false;
@@ -177,7 +177,6 @@ export default {
       this.toolMode = "pen";
       this.color = "#000000";
       this.ctx.strokeStyle = this.color;
-      this.client.disconnect();
       this.comment = [];
     },
     getStrokeColor(event) {
