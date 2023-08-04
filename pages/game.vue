@@ -282,7 +282,7 @@ export default {
       this.ctx.lineWidth = this.toolMode === "brush" ? parseInt(this.lineSize) * 0.02 : this.lineSize;
       if (mode === "clear") {
         this.ctx.globalCompositeOperation="destination-out";
-        this.ctx.beginPath();
+
         this.ctx.rect(1,1,this.$refs.canvas.width,this.$refs.canvas.height,Math.PI*2,false);
         this.ctx.fill();
         this.ctx.stroke();
@@ -319,6 +319,7 @@ export default {
     },
     drawingBoard() {
       this.ctx = this.$refs.canvas.getContext("2d", {willReadFrequently: true});
+      this.ctx.lineJoin = "round";
       this.ctx.lineCap = "round";
       this.ctx.lineWidth = this.lineSize;
     },
