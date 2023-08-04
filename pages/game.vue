@@ -3,10 +3,7 @@ definePageMeta({ middleware: "session" });
 </script>
 <template>
   <main class="my-2 centered-content">
-    <div id="game"
-         @keydown="keydown"
-         @keyup="keyup"
-    >
+    <div id="game" @keydown="keydown" @keyup="keyup">
       <div class="row row-cols-2 g-4">
         <div class="col-4">
           <div class="row row-cols-1 g-0">
@@ -20,22 +17,22 @@ definePageMeta({ middleware: "session" });
             <div id="board-tools" class="col text-center d-flex align-items-center justify-content-center p-3">
               <div v-if="gameStarted">
                 <div id="tools" class="my-2">
-                  <button :class="`btn me-1 ${toolMode == `pen` ? `btn-active` : ``}`" @click="mode(`pen`)">
+                  <button :class="`btn me-1 ${toolMode === `pen` ? `btn-active` : ``}`" @click="mode(`pen`)">
                     <span class="m-0 h3 d-flex align-items-center justify-content-center">
                       <Icon class="iconify" name="ph:pencil-simple-duotone" />
                     </span>
                   </button>
-                  <button :class="`btn mx-1 ${toolMode == `brush` ? `btn-active` : ``}`" @click="mode(`brush`)">
+                  <button :class="`btn mx-1 ${toolMode === `brush` ? `btn-active` : ``}`" @click="mode(`brush`)">
                     <span class="m-0 h3 d-flex align-items-center justify-content-center">
                       <Icon class="iconify" name="ph:paint-brush" />
                     </span>
                   </button>
-                  <button :class="`btn mx-1 ${toolMode == `eraser` ? `btn-active` : ``}`" @click="mode(`eraser`)">
+                  <button :class="`btn mx-1 ${toolMode === `eraser` ? `btn-active` : ``}`" @click="mode(`eraser`)">
                     <span class="m-0 h3 d-flex align-items-center justify-content-center">
                       <Icon class="iconify" name="ph:eraser-duotone" />
                     </span>
                   </button>
-                  <button :class="`btn mx-1 ${toolMode == `bucket` ? `btn-active` : ``}`" @click="mode(`bucket`)">
+                  <button :class="`btn mx-1 ${toolMode === `bucket` ? `btn-active` : ``}`" @click="mode(`bucket`)">
                     <span class="m-0 h3 d-flex align-items-center justify-content-center">
                       <Icon class="iconify" name="ph:paint-bucket-duotone" />
                     </span>
@@ -82,13 +79,13 @@ definePageMeta({ middleware: "session" });
                     :class="`paint-canvas ${gameStarted ? `d-block` : `d-none`}`"
                     width="1134"
                     height="822"
-                    @mousedown="startDrawing($event, `mouse`)"
-                    @mousemove="drawLine($event, `mouse`)"
+                    @mousedown="startDrawing"
+                    @mousemove="drawLine"
                     @mouseup="stopDrawing"
                     @mouseleave="outControl"
                     @mouseenter="outControl"
-                    @touchstart="startDrawing($event, `touch`)"
-                    @touchmove="drawLine($event, `touch`)"
+                    @touchstart="startDrawing"
+                    @touchmove="drawLine"
                     @touchend="stopDrawing"
             />
             <div id="start" :class="`justify-content-center align-content-center ${!gameStarted ? `row` : `d-none`}`">
@@ -151,14 +148,9 @@ export default {
     this.adjustScale();
     this.drawingBoard();
     window.addEventListener("resize", this.adjustScale);
-    document.body.addEventListener("touchmove", function(e) { e.preventDefault(); }, { passive: false });
-
-    document.addEventListener("mouseup", (event) => {
-      this.outUpControl(event);
-    });
-    document.addEventListener("mousemove", (event) => {
-      this.outUpControl(event);
-    });
+    document.body.addEventListener("touchmove", (event) => { event.preventDefault(); }, { passive: false });
+    document.addEventListener("mouseup", (event) => { this.outUpControl(event); });
+    document.addEventListener("mousemove", (event) => { this.outUpControl(event); });
   },
   methods: {
     logout() {
@@ -169,7 +161,7 @@ export default {
       this.gameStarted = true;
       this.client = new this.tmi.Client({
         connection: { secure: true, reconnect: true },
-        channels: [this.userClient], // Twitch Channel Test
+        channels: [this.userClient], // Twitch Channel
       });
       this.client.connect();
       this.client.on("message", (channel, tags, message) => {
@@ -195,40 +187,38 @@ export default {
     },
     getLineSize(event) {
       this.lineSize = event.target.value;
-      this.toolMode == "brush" ? this.ctx.lineWidth = parseInt(this.lineSize) * 0.02 : this.ctx.lineWidth = this.lineSize; 
+      this.ctx.lineWidth = this.toolMode === "brush" ? parseInt(this.lineSize) * 0.02 : this.lineSize; 
     },
     setColor(color) {
       this.color = color;
       this.ctx.strokeStyle = this.color; 
     },
-    startDrawing (event, type) {
+    startDrawing (event) {
       let x, y;
-      if (type == "touch") {
-        const rect = event.target.getBoundingClientRect();
-        const rect_x = event.changedTouches[0].pageX - rect.left;
-        const rect_y = event.changedTouches[0].pageY - rect.top;
-        x = Math.round((rect_x * event.target.width) / rect.width);
-        y = Math.round((rect_y * event.target.height) / rect.height);
+      const rect = event.target.getBoundingClientRect();
+      if (event.type === "touchstart") {
+        const touch = event.changedTouches[0];
+        x = Math.round((touch.pageX - rect.left) * event.target.width / rect.width);
+        y = Math.round((touch.pageY - rect.top) * event.target.height / rect.height);
       } else {
         x = event.offsetX;
         y = event.offsetY;
       }
-      if (this.toolMode == "pen" || this.toolMode == "eraser" || this.toolMode == "brush") {
-        this.toolMode == "eraser" ? this.ctx.globalCompositeOperation="destination-out" : this.ctx.globalCompositeOperation="source-over";
-        this.toolMode == "brush" ? this.points = parseInt(this.lineSize) + 4 : this.points = 1;
+      if (["pen", "eraser", "brush"].includes(this.toolMode)) {
+        this.ctx.globalCompositeOperation = this.toolMode === "eraser" ? "destination-out" : "source-over";
+        this.points = this.toolMode === "brush" ? parseInt(this.lineSize) + 4 : 1;
         this.drawing = true;   
         [this.x, this.y] = [x, y];
         this.ctx.beginPath();
         for (let i = 0; i < this.points; i ++) {
           this.ctx.rect(this.x + i,this.y + i,0,0,Math.PI*2,false);
         } 
-        this.ctx.fill();
+        this.ctx.stroke();
         this.ctx.globalCompositeOperation="source-over";
       } else {
         this.drawing = false; 
         const imageData = this.ctx.getImageData(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
-        this.x = x;
-        this.y = y;
+        [this.x, this.y] = [x, y];
         floodFill(imageData, this.color, this.x, this.y);
         this.ctx.putImageData(imageData, 0, 0);
       }  
@@ -238,51 +228,34 @@ export default {
       this.undoHistory.push(this.$refs.canvas.toDataURL());
       this.redoHistory = [];
     },
-    outControl(event) {
-      event.type == "mouseleave" ? this.out = true : this.out = false;
-    },
-    outUpControl(event) {
-      if (event.type == "mouseup" && this.out == true && this.drawing == true) {
-        this.stopDrawing(event);
-      } else if (event.type == "mousemove" && this.out == true && this.drawing == true) {
-        const rect = event.target.getBoundingClientRect();
-        const rect_x = event.pageX - rect.left;
-        const rect_y = event.pageY - rect.top;
-        this.x = Math.round((rect_x * event.target.width) / rect.width);
-        this.y = Math.round((rect_y * event.target.height) / rect.height);
-      }
-    },
-    drawLine(event, type) {
+    drawLine(event) {
+      if (!this.drawing) return;
       let x, y;
-      if (type == "touch") {
-        const rect = event.target.getBoundingClientRect();
-        const rect_x = event.changedTouches[0].pageX - rect.left;
-        const rect_y = event.changedTouches[0].pageY - rect.top;
-        x = Math.round((rect_x * event.target.width) / rect.width);
-        y = Math.round((rect_y * event.target.height) / rect.height);
+      const rect = event.target.getBoundingClientRect();
+      if (event.type === "touchmove") {
+        const touch = event.changedTouches[0];
+        x = Math.round((touch.pageX - rect.left) * event.target.width / rect.width);
+        y = Math.round((touch.pageY - rect.top) * event.target.height / rect.height);
       } else {
         x = event.offsetX;
         y = event.offsetY;
       }
-      if (this.drawing) {
-        this.toolMode == "eraser" ? this.ctx.globalCompositeOperation="destination-out" : this.ctx.globalCompositeOperation="source-over";
-        this.ctx.beginPath();
-        for (let i = 0; i < this.points; i++) {
-          this.ctx.moveTo(this.x + i, this.y + i);
-          this.ctx.lineTo(x + i, y + i);
-        } 
-        this.ctx.stroke();
-        this.x = x;
-        this.y = y;
-        this.ctx.globalCompositeOperation="source-over";
-      }
+      this.ctx.globalCompositeOperation = this.toolMode === "eraser" ? "destination-out" : "source-over";
+      this.ctx.beginPath();
+      for (let i = 0; i < this.points; i++) {
+        this.ctx.moveTo(this.x + i, this.y + i);
+        this.ctx.lineTo(x + i, y + i);
+      } 
+      this.ctx.stroke();
+      [this.x, this.y] = [x, y];
+      this.ctx.globalCompositeOperation="source-over";
     },
     undo () {
       const lastState = this.undoHistory.pop();
       if (lastState) {
         this.redoHistory.push(lastState);
         const undoState = this.undoHistory[this.undoHistory.length - 1];
-        if (undoState != undefined) {
+        if (undoState !== undefined) {
           const image = new Image();
           image.onload = () => {
             this.ctx.clearRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
@@ -306,25 +279,10 @@ export default {
         this.undoHistory.push(redoState);
       }
     },
-    keydown (event) {
-      event.key == "Control" ? this.ctrl = true : null;
-      event.key == "Shift" ? this.shift = true : null;
-      event.key.toLowerCase() == "z" ? this.z = true : null;
-      if (this.ctrl == true && this.shift == false && this.z == true) {
-        this.undo();
-      } else if (this.ctrl == true && this.shift == true && this.z == true) {
-        this.redo();
-      }
-    },
-    keyup(event) {
-      event.key == "Control" ? this.ctrl = false : null;
-      event.key == "Shift" ? this.shift = false : null;
-      event.key.toLowerCase() == "z" ? this.z = false : null;
-    },
     mode(mode) {
       mode !== "clear" ? this.toolMode = mode : null;
-      this.toolMode == "brush" ? this.ctx.lineWidth = parseInt(this.lineSize) * 0.02 : this.ctx.lineWidth = this.lineSize;
-      if (mode == "clear") {
+      this.ctx.lineWidth = this.toolMode === "brush" ? parseInt(this.lineSize) * 0.02 : this.lineSize;
+      if (mode === "clear") {
         this.ctx.globalCompositeOperation="destination-out";
         this.ctx.beginPath();
         this.ctx.rect(1,1,this.$refs.canvas.width,this.$refs.canvas.height,Math.PI*2,false);
@@ -332,6 +290,33 @@ export default {
         this.ctx.stroke();
         this.ctx.globalCompositeOperation="source-over";
         this.stopDrawing();
+      }
+    },
+    keydown (event) {
+      this.ctrl = event.key === "Control";
+      this.shift = event.key === "Shift";
+      this.z = event.key.toLowerCase() === "z";
+      if (this.ctrl && !this.shift && this.z) {
+        this.undo();
+      } else if (this.ctrl && this.shift && this.z) {
+        this.redo();
+      }
+    },
+    keyup(event) {
+      this.ctrl = event.key !== "Control";
+      this.shift = event.key !== "Shift";
+      this.z = event.key.toLowerCase() !== "z";
+    },
+    outControl(event) {
+      event.type === "mouseleave" ? this.out = true : this.out = false;
+    },
+    outUpControl(event) {
+      if (event.type === "mouseup" && this.out && this.drawing) {
+        this.stopDrawing(event);
+      } else if (event.type === "mousemove" && this.out && this.drawing) {
+        const rect = event.target.getBoundingClientRect();
+        this.x = Math.round(((event.pageX - rect.left) * event.target.width) / rect.width);
+        this.y = Math.round(((event.pageY - rect.top) * event.target.height) / rect.height);
       }
     },
     drawingBoard() {
