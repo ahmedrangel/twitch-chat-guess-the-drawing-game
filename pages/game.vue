@@ -19,7 +19,7 @@ definePageMeta({ middleware: "session" });
                 <div id="tools" class="my-2">
                   <button :class="`btn me-1 ${toolMode === `pen` ? `btn-active` : ``}`" @click="mode(`pen`)">
                     <span class="m-0 h3 d-flex align-items-center justify-content-center">
-                      <Icon class="iconify" name="ph:pencil-simple-duotone" />
+                      <Icon class="iconify" name="ph:pencil-duotone" />
                     </span>
                   </button>
                   <button :class="`btn mx-1 ${toolMode === `brush` ? `btn-active` : ``}`" @click="mode(`brush`)">
