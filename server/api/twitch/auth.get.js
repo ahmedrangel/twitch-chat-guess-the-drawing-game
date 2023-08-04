@@ -2,7 +2,6 @@ export default eventHandler(async (event) => {
   const config = useRuntimeConfig(event);
   const { code, error } = getQuery(event);
   const redirectUrl = getRequestURL(event).href.split("?")[0];
-  console.log(redirectUrl);
   if (!code) {
     return sendRedirect(event, `https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=${config.twitch.clientId}&redirect_uri=${redirectUrl}&scope=${encodeURIComponent("user:read:email")}`);
   }

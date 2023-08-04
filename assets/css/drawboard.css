@@ -17,37 +17,42 @@ body {
   background-size: cover;*/
 }
 
-.paint-canvas {
+.paint-canvas, #start {
   border: 3px #d2d2d2 solid;
   margin-left: 78px;
-  margin-top: 20px;
+  margin-top: 6px;
 }
-
-canvas {
+.top-info {
+  margin-left: 78px;
+  width: 1134px;
+}
+canvas, #start, #canvas {
   border-radius: 20px;
-  height: 872px;
+  height: 822px;
   width: 1134px;
 }
 
 #twitch-chat {  
-  background-color: #fbd4ff;
   height: 447px;
   font-size: 1.45rem;
-  border-radius: 10px;
   margin-bottom: 18px;
   overflow: hidden;
 }
 
 #board-tools {
-  background-color: #fbd4ff;
   height: 447px;
+}
+
+#twitch-chat, #board-tools {
+  background-color: #fbd4ff;
+  border: 6px solid #000;
   border-radius: 10px;
 }
 
 #game {
   position: absolute;
   top: 50%;
-  left: 51%;
+  left: 51.3%;
   -webkit-transform: translate(-50%, -50%);
   -moz-transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
@@ -67,8 +72,8 @@ canvas {
  }
 
 .dot-preview {
-  height: 110px;
-  width: 110px;
+  height: 100px;
+  width: 100px;
 }
 
 .palette span {
@@ -95,7 +100,7 @@ input[type=range] {
   font-size: 3.5rem!important;
 }
 
-#tools .btn {
+#tools .btn, .top-info .btn {
   padding: 2px;
   background-color: var(--white);
   border: 3px solid #1a1a1a;
@@ -119,4 +124,18 @@ input[type=range] {
   background-repeat: no-repeat;
   background-position-x: -32px;
   background-position-y: -461px;
+}
+#start .btn svg {
+  font-size: 2.4rem;
+}
+#start .btn {
+  font-size: 1.6rem;
+  width: 220px;
+  background-color: var(--white);
+  border: 3px solid #1a1a1a;
+  border-radius: 10px;
+}
+
+.top-info svg {
+  font-size: 2.2rem!important;
 }

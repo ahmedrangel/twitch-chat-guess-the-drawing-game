@@ -18,8 +18,8 @@ definePageMeta({ middleware: "session" });
               </div>
             </div>
             <div id="board-tools" class="col text-center d-flex align-items-center justify-content-center p-3">
-              <div>
-                <div id="tools" class="my-4">
+              <div v-if="gameStarted">
+                <div id="tools" class="my-2">
                   <button :class="`btn me-1 ${toolMode == `pen` ? `btn-active` : ``}`" @click="mode(`pen`)">
                     <span class="m-0 h3 d-flex align-items-center justify-content-center">
                       <Icon class="iconify" name="ph:pencil-simple-duotone" />
@@ -56,13 +56,13 @@ definePageMeta({ middleware: "session" });
                     </span>
                   </button>
                 </div>
-                <div class="my-4 d-flex ranges justify-content-center">
-                  <input v-model="lineSize" type="range" class="mx-2" min="5" max="110" step="5" @input="getLineSize">
+                <div class="my-2 d-flex ranges justify-content-center">
+                  <input v-model="lineSize" type="range" class="mx-2" min="4" max="100" step="2" @input="getLineSize">
                   <div class="dot-preview d-flex align-items-center justify-content-center mx-2">
                     <label class="dot d-flex" :style="`height:${lineSize}px; width: ${lineSize}px; background-color: ${color}`" />
                   </div>
                 </div>
-                <div class="my-4 palette d-flex">
+                <div class="my-2 palette d-flex">
                   <span v-for="(c, index) of defaultColors()" :key="index" class="black mx-1" :style="`background-color:${c};`" @click="setColor(c)" />
                   <input type="color" class="color-picker mx-1" :value="color" @input="getStrokeColor">
                 </div>
@@ -70,19 +70,41 @@ definePageMeta({ middleware: "session" });
             </div>
           </div>
         </div>
-        <div class="col-8 p-0 bg-canvas">
-          <canvas ref="canvas"
-                  tabindex="0"
-                  class="paint-canvas d-block"
-                  width="1134"
-                  height="872"
-                  @mousedown="startDrawing($event, `mouse`)"
-                  @mousemove="drawLine($event, `mouse`)"
-                  @mouseup="stopDrawing()"
-                  @touchstart="startDrawing($event, `touch`)"
-                  @touchmove="drawLine($event, `touch`)"
-                  @touchend="stopDrawing()"
-          />
+        <div class="col-8 p-0 pb-4 bg-canvas">
+          <div id="canvas">
+            <div :class="`top-info d-flex justify-content-end mt-3 ${gameStarted ? `visible` : `invisible`}`">
+              <button class="btn" @click="stopGame">
+                <Icon class="iconify" name="ph:x-bold" />
+              </button>
+            </div>
+            <canvas ref="canvas"
+                    tabindex="0"
+                    :class="`paint-canvas ${gameStarted ? `d-block` : `d-none`}`"
+                    width="1134"
+                    height="822"
+                    @mousedown="startDrawing($event, `mouse`)"
+                    @mousemove="drawLine($event, `mouse`)"
+                    @mouseup="stopDrawing"
+                    @touchstart="startDrawing($event, `touch`)"
+                    @touchmove="drawLine($event, `touch`)"
+                    @touchend="stopDrawing"
+            />
+            <div id="start" :class="`justify-content-center align-content-center ${!gameStarted ? `row` : `d-none`}`">
+              <div class="col-12 d-flex justify-content-center align-items-center">
+                <h1>{{ userClient }}</h1>
+              </div>
+              <div class="col-12 d-flex justify-content-center align-items-center mt-5">
+                <button class="btn d-flex justify-content-center align-items-center mx-5 py-3" @click="logout">
+                  <Icon class="iconify me-3" name="tabler:logout-2" />
+                  <span>LOG OUT</span>
+                </button>
+                <button class="btn d-flex justify-content-center align-items-center mx-5 py-3" @click="startGame">
+                  <Icon class="iconify me-3" name="ph:play-duotone" />
+                  <span>START</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -108,9 +130,11 @@ export default {
       toolMode: "pen",
       lineSize: 5,
       tmi: this.$nuxt.$tmi,
+      loginClient: null,
       userClient: null,
       points: 1,
-      session: useUserSession()
+      session: useUserSession(),
+      gameStarted: false
     };
   },
   beforeUnmount() {
@@ -118,8 +142,9 @@ export default {
     window.removeEventListener("resize", this.adjustScale);
   },
   mounted () {
-    console.log(this.session.user)
-    this.userClient = this.session.user.login;
+    console.log(this.session.user);
+    this.loginClient = this.session.user.login;
+    this.userClient = this.session.user.display_name;
     this.adjustScale();
     this.client = new this.tmi.Client({
       connection: { secure: true, reconnect: true },
@@ -135,6 +160,23 @@ export default {
     document.body.addEventListener("touchmove", function(e) { e.preventDefault(); }, { passive: false });
   },
   methods: {
+    logout() {
+      this.session.clear();
+      this.$router.replace("/");
+    },
+    startGame() {
+      this.gameStarted = true;
+    },
+    stopGame() {
+      this.gameStarted = false;
+      this.undoHistory = [];
+      this.redoHistory = [];
+      this.mode("clear");
+      this.lineSize = 5;
+      this.toolMode = "pen";
+      this.color = "#000000";
+      this.ctx.strokeStyle = this.color;
+    },
     getStrokeColor(event) {
       this.color = event.target.value;
       this.ctx.strokeStyle = this.color; 
@@ -287,7 +329,7 @@ export default {
       const scale = Math.min(scaleX, scaleY);
       const app = document.getElementById("game");
       app.style.transform = `translate(-50%, -50%) scale(${scale})`;
-    }
-  }
+    },
+  },
 };
 </script>
