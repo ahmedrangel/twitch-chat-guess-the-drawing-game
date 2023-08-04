@@ -17,16 +17,22 @@ body {
   background-size: cover;*/
 }
 
-.paint-canvas, #start {
+#start, .canvas-box {
   border: 3px #d2d2d2 solid;
   margin-left: 78px;
   margin-top: 6px;
 }
+
+.canvas-box, #start, #canvas {
+  height: 825px; /* canvas height + border */
+  width: 1137px; /* canvas width + border */
+}
+
 .top-info {
   margin-left: 78px;
   width: 1134px;
 }
-canvas, #start, #canvas {
+canvas {
   border-radius: 20px;
   height: 822px;
   width: 1134px;

@@ -74,20 +74,22 @@ definePageMeta({ middleware: "session" });
                 <Icon class="iconify" name="ph:x-bold" />
               </button>
             </div>
-            <canvas ref="canvas"
-                    tabindex="0"
-                    :class="`paint-canvas ${gameStarted ? `d-block` : `d-none`}`"
-                    width="1134"
-                    height="822"
-                    @mousedown="startDrawing"
-                    @mousemove="drawLine"
-                    @mouseup="stopDrawing"
-                    @mouseleave="outControl"
-                    @mouseenter="outControl"
-                    @touchstart="startDrawing"
-                    @touchmove="drawLine"
-                    @touchend="stopDrawing"
-            />
+            <div :class="` canvas-box ${gameStarted ? `d-block` : `d-none`}`">
+              <canvas ref="canvas"
+                      tabindex="0"
+                      class="paint-canvas"
+                      width="1134"
+                      height="822"
+                      @mousedown="startDrawing($event, `mouse`)"
+                      @mousemove="drawLine($event, `mouse`)"
+                      @mouseup="stopDrawing($event, `touch`)"
+                      @mouseleave="outControl"
+                      @mouseenter="outControl"
+                      @touchstart="startDrawing"
+                      @touchmove="drawLine($event, `touch`)"
+                      @touchend="stopDrawing"
+              />
+            </div>
             <div id="start" :class="`justify-content-center align-content-center ${!gameStarted ? `row` : `d-none`}`">
               <div class="col-12 d-flex justify-content-center align-items-center">
                 <h1>{{ userClient }}</h1>
@@ -127,7 +129,7 @@ export default {
       shift: false,
       z: false,
       toolMode: "pen",
-      lineSize: 5,
+      lineSize: 14,
       tmi: this.$nuxt.$tmi,
       loginClient: null,
       userClient: null,
@@ -173,7 +175,7 @@ export default {
       this.undoHistory = [];
       this.redoHistory = [];
       this.mode("clear");
-      this.lineSize = 5;
+      this.lineSize = 14;
       this.toolMode = "pen";
       this.color = "#000000";
       this.ctx.strokeStyle = this.color;
@@ -191,17 +193,11 @@ export default {
       this.color = color;
       this.ctx.strokeStyle = this.color; 
     },
-    startDrawing (event) {
-      let x, y;
+    startDrawing (event, type) {
       const rect = event.target.getBoundingClientRect();
-      if (event.type === "touchstart") {
-        const touch = event.changedTouches[0];
-        x = Math.round((touch.pageX - rect.left) * event.target.width / rect.width);
-        y = Math.round((touch.pageY - rect.top) * event.target.height / rect.height);
-      } else {
-        x = event.offsetX;
-        y = event.offsetY;
-      }
+      const mouse = type === "touch" ? event.changedTouches[0] : event;
+      const x = Math.round((mouse.pageX - rect.left) * event.target.width / rect.width);
+      const y = Math.round((mouse.pageY - rect.top) * event.target.height / rect.height);
       if (["pen", "eraser", "brush"].includes(this.toolMode)) {
         this.ctx.globalCompositeOperation = this.toolMode === "eraser" ? "destination-out" : "source-over";
         this.points = this.toolMode === "brush" ? parseInt(this.lineSize) + 4 : 1;
@@ -226,18 +222,12 @@ export default {
       this.undoHistory.push(this.$refs.canvas.toDataURL());
       this.redoHistory = [];
     },
-    drawLine(event) {
+    drawLine(event, type) {
       if (!this.drawing) return;
-      let x, y;
       const rect = event.target.getBoundingClientRect();
-      if (event.type === "touchmove") {
-        const touch = event.changedTouches[0];
-        x = Math.round((touch.pageX - rect.left) * event.target.width / rect.width);
-        y = Math.round((touch.pageY - rect.top) * event.target.height / rect.height);
-      } else {
-        x = event.offsetX;
-        y = event.offsetY;
-      }
+      const mouse = type === "touch" ? event.changedTouches[0] : event;
+      const x = Math.round((mouse.pageX - rect.left) * event.target.width / rect.width);
+      const y = Math.round((mouse.pageY - rect.top) * event.target.height / rect.height);
       this.ctx.globalCompositeOperation = this.toolMode === "eraser" ? "destination-out" : "source-over";
       this.ctx.beginPath();
       for (let i = 0; i < this.points; i++) {
