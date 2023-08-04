@@ -156,6 +156,9 @@ export default {
     document.addEventListener("mouseup", (event) => {
       this.outUpControl(event);
     });
+    document.addEventListener("mousemove", (event) => {
+      this.outUpControl(event);
+    });
   },
   methods: {
     logout() {
@@ -197,7 +200,6 @@ export default {
     setColor(color) {
       this.color = color;
       this.ctx.strokeStyle = this.color; 
-      console.info(this.color);
     },
     startDrawing (event, type) {
       let x, y;
@@ -221,7 +223,6 @@ export default {
           this.ctx.rect(this.x + i,this.y + i,0,0,Math.PI*2,false);
         } 
         this.ctx.fill();
-        this.ctx.stroke();
         this.ctx.globalCompositeOperation="source-over";
       } else {
         this.drawing = false; 
@@ -243,6 +244,9 @@ export default {
     outUpControl(event) {
       if (event.type == "mouseup" && this.out == true && this.drawing == true) {
         this.stopDrawing(event);
+      } else if (event.type == "mousemove" && this.out == true && this.drawing == true) {
+        this.x = event.offsetX - 81;
+        this.y = event.offsetY - 54;
       }
     },
     drawLine(event, type) {
@@ -303,12 +307,9 @@ export default {
       event.key == "Control" ? this.ctrl = true : null;
       event.key == "Shift" ? this.shift = true : null;
       event.key.toLowerCase() == "z" ? this.z = true : null;
-      console.info(event.key);
       if (this.ctrl == true && this.shift == false && this.z == true) {
-        console.info("undo");
         this.undo();
       } else if (this.ctrl == true && this.shift == true && this.z == true) {
-        console.info("redo");
         this.redo();
       }
     },
