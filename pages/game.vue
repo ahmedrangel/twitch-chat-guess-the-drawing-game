@@ -1,5 +1,5 @@
 <script setup>
-
+definePageMeta({ middleware: "session" });
 </script>
 <template>
   <main class="my-2 centered-content">
@@ -146,7 +146,6 @@ export default {
     this.adjustScale();
     this.loginClient = this.session.user.login;
     this.userClient = this.session.user.display_name;
-    
     this.drawingBoard();
     window.addEventListener("resize", this.adjustScale);
     document.addEventListener("mouseup", (event) => { this.outUpControl(event); });
