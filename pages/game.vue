@@ -1,5 +1,5 @@
 <script setup>
-definePageMeta({ middleware: "session" });
+
 </script>
 <template>
   <main class="my-2 centered-content">
@@ -143,12 +143,12 @@ export default {
     window.removeEventListener("resize", this.adjustScale);
   },
   mounted () {
+    this.adjustScale();
     this.loginClient = this.session.user.login;
     this.userClient = this.session.user.display_name;
-    this.adjustScale();
+    
     this.drawingBoard();
     window.addEventListener("resize", this.adjustScale);
-    document.body.addEventListener("touchmove", (event) => { event.preventDefault(); }, { passive: false });
     document.addEventListener("mouseup", (event) => { this.outUpControl(event); });
     document.addEventListener("mousemove", (event) => { this.outUpControl(event); });
   },
