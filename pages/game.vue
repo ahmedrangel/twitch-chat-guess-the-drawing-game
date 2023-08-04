@@ -305,7 +305,7 @@ export default {
     keyup(event) {
       event.key === "Control" ? this.ctrl = false : null;
       event.key === "Shift" ? this.shift = false : null;
-      event.key.toLowerCase() == "z" ? this.z = false : null;
+      event.key.toLowerCase() === "z" ? this.z = false : null;
     },
     outControl(event) {
       event.type === "mouseleave" ? this.out = true : this.out = false;
