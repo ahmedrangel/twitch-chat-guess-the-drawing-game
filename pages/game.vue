@@ -293,9 +293,9 @@ export default {
       }
     },
     keydown (event) {
-      this.ctrl = event.key === "Control";
-      this.shift = event.key === "Shift";
-      this.z = event.key.toLowerCase() === "z";
+      event.key === "Control" ? this.ctrl = true : null;
+      event.key === "Shift" ? this.shift = true : null;
+      event.key.toLowerCase() == "z" ? this.z = true : null;
       if (this.ctrl && !this.shift && this.z) {
         this.undo();
       } else if (this.ctrl && this.shift && this.z) {
@@ -303,9 +303,9 @@ export default {
       }
     },
     keyup(event) {
-      this.ctrl = event.key !== "Control";
-      this.shift = event.key !== "Shift";
-      this.z = event.key.toLowerCase() !== "z";
+      event.key === "Control" ? this.ctrl = false : null;
+      event.key === "Shift" ? this.shift = false : null;
+      event.key.toLowerCase() == "z" ? this.z = false : null;
     },
     outControl(event) {
       event.type === "mouseleave" ? this.out = true : this.out = false;
