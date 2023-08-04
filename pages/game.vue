@@ -144,10 +144,10 @@ export default {
   },
   mounted () {
     this.adjustScale();
+    window.addEventListener("resize", this.adjustScale);
     this.loginClient = this.session.user.login;
     this.userClient = this.session.user.display_name;
     this.drawingBoard();
-    window.addEventListener("resize", this.adjustScale);
     document.addEventListener("mouseup", (event) => { this.outUpControl(event); });
     document.addEventListener("mousemove", (event) => { this.outUpControl(event); });
   },
@@ -326,10 +326,11 @@ export default {
     adjustScale() {
       const referenceWidth = 1920;
       const referenceHeight = 940;
-      const currentWidth = window.innerWidth;
-      const currentHeight = window.innerHeight;
+      const currentWidth = document.documentElement.clientWidth;
+      const currentHeight = document.documentElement.clientHeight;
       const scaleX = currentWidth / referenceWidth;
       const scaleY = currentHeight / referenceHeight;
+      console.log(scaleY);
       const scale = Math.min(scaleX, scaleY);
       const app = document.getElementById("game");
       app.style.transform = `translate(-50%, -50%) scale(${scale})`;
