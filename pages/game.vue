@@ -295,7 +295,7 @@ export default {
     keydown (event) {
       event.key === "Control" ? this.ctrl = true : null;
       event.key === "Shift" ? this.shift = true : null;
-      event.key.toLowerCase() == "z" ? this.z = true : null;
+      event.key.toLowerCase() === "z" ? this.z = true : null;
       if (this.ctrl && !this.shift && this.z) {
         this.undo();
       } else if (this.ctrl && this.shift && this.z) {
