@@ -1,5 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-export default ({
+export default defineNuxtConfig({
   css: [
     "bootstrap/dist/css/bootstrap.min.css",
     "~/assets/css/drawboard.css"
@@ -27,5 +27,8 @@ export default ({
       clientId: "",
       clientSecret: ""
     }
+  },
+  experimental: {
+    inlineSSRStyles: false
   }
 });

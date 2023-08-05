@@ -17,13 +17,13 @@ body {
   background-size: cover;*/
 }
 
-#start, .canvas-box {
+#start, .canvas-box, .picking {
   border: 3px #d2d2d2 solid;
   margin-left: 78px;
   margin-top: 6px;
 }
 
-.canvas-box, #start, #canvas {
+.canvas-box, #start, #canvas, .picking {
   height: 825px; /* canvas height + border */
   width: 1137px; /* canvas width + border */
 }
@@ -39,20 +39,23 @@ canvas {
 }
 
 #twitch-chat {  
-  height: 447px;
   font-size: 1.45rem;
-  margin-bottom: 18px;
   overflow: hidden;
 }
 
-#board-tools {
-  height: 447px;
+#board-tools, #chat-scores, #twitch-chat {
+  height: 292px;
 }
 
-#twitch-chat, #board-tools {
+#twitch-chat, #board-tools, #chat-scores {
   background-color: #fbd4ff;
   border: 6px solid #000;
   border-radius: 10px;
+}
+
+#chat-scores, #twitch-chat {
+  font-size: 1.45rem;
+  margin-bottom: 17px;
 }
 
 #game {
@@ -130,6 +133,7 @@ input[type=range] {
   background-repeat: no-repeat;
   background-position-x: -32px;
   background-position-y: -461px;
+  padding-bottom: 71px!important;
 }
 #start .btn svg {
   font-size: 2.4rem;

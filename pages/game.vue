@@ -7,6 +7,13 @@ definePageMeta({ middleware: "session" });
       <div class="row row-cols-2 g-4">
         <div class="col-4">
           <div class="row row-cols-1 g-0">
+            <div id="chat-scores" class="col d-flex p-3">
+              <div class="overflow-hidden d-flex justify-content-end flex-column">
+                <p v-for="(chat, index) of comment" :key="index" class="col-12 mb-1">
+                  <b>{{ chat.display_name }}:</b> {{ chat.message }}
+                </p>
+              </div>
+            </div>
             <div id="twitch-chat" class="col d-flex p-3">
               <div class="overflow-hidden d-flex justify-content-end flex-column">
                 <p v-for="(chat, index) of comment" :key="index" class="col-12 mb-1">
@@ -15,7 +22,10 @@ definePageMeta({ middleware: "session" });
               </div>
             </div>
             <div id="board-tools" class="col text-center d-flex align-items-center justify-content-center p-3">
-              <div v-if="gameStarted">
+              <div v-if="wordPicking">
+                <div v-for="(w, index) of randomObjects" :key="index" @click="startGame">{{ w }}</div>
+              </div>
+              <div v-else-if="gameStarted">
                 <div id="tools" class="my-2">
                   <button :class="`btn me-1 ${toolMode === `pen` ? `btn-active` : ``}`" @click="mode(`pen`)">
                     <span class="m-0 h3 d-flex align-items-center justify-content-center">
@@ -53,7 +63,7 @@ definePageMeta({ middleware: "session" });
                     </span>
                   </button>
                 </div>
-                <div class="my-2 d-flex ranges justify-content-center">
+                <div class="my-2 d-flex ranges align-items-center justify-content-center">
                   <input v-model="lineSize" type="range" class="mx-2" min="4" max="100" step="2" @input="getLineSize">
                   <div class="dot-preview d-flex align-items-center justify-content-center mx-2">
                     <label class="dot d-flex" :style="`height:${lineSize}px; width: ${lineSize}px; background-color: ${color}`" />
@@ -69,7 +79,7 @@ definePageMeta({ middleware: "session" });
         </div>
         <div class="col-8 p-0 pb-4 bg-canvas">
           <div id="canvas">
-            <div :class="`top-info d-flex justify-content-end mt-3 ${gameStarted ? `visible` : `invisible`}`">
+            <div :class="`top-info d-flex justify-content-end mt-3 ${wordPicking || gameStarted ? `visible` : `invisible`}`">
               <button class="btn" @click="stopGame">
                 <Icon class="iconify" name="ph:x-bold" />
               </button>
@@ -90,19 +100,59 @@ definePageMeta({ middleware: "session" });
                       @touchend="stopDrawing"
               />
             </div>
-            <div id="start" :class="`justify-content-center align-content-center ${!gameStarted ? `row` : `d-none`}`">
-              <div class="col-12 d-flex justify-content-center align-items-center">
-                <h1>{{ userClient }}</h1>
-              </div>
-              <div class="col-12 d-flex justify-content-center align-items-center mt-5">
-                <button class="btn d-flex justify-content-center align-items-center mx-5 py-3" @click="logout">
-                  <Icon class="iconify me-3" name="tabler:logout-2" />
-                  <span>LOG OUT</span>
-                </button>
-                <button class="btn d-flex justify-content-center align-items-center mx-5 py-3" @click="startGame">
-                  <Icon class="iconify me-3" name="ph:play-duotone" />
-                  <span>START</span>
-                </button>
+            <div :class="`justify-content-center align-content-center ${!gameStarted && wordPicking ? `picking` : null } ${!gameStarted && wordPicking || !gameStarted && !wordPicking ? `d-block` : `d-none`}`">
+              <div v-if="!wordPicking" id="start" class="row justify-content-center align-content-center">
+                <div class="col-12 d-flex justify-content-center align-items-center">
+                  <h1>{{ userClient }}</h1>
+                </div>
+                <div class="col-12 d-block justify-content-center align-items-center">
+                  <div class="my-4">
+                    <h3>{{ t("language") }}</h3>
+                    <select v-model="lang">
+                      <option value="en">ENGLISH</option>
+                      <option value="es">SPANISH</option>
+                    </select>
+                  </div>
+                  <div class="my-4 d-flex">
+                    <div>
+                      <h3>{{ t("word_category") }}</h3>
+                      <select v-model="choosenCategory">
+                        <option v-for="(c, index) of categories" :key="index" :value="c.type">{{ c.title }}</option>
+                      </select>
+                    </div>
+                    <div v-if="choosenCategory ==`games`" class="ms-5">
+                      <h3>{{ t("videogames") }}</h3>
+                      <select v-model="choosenGame">
+                        <option v-for="(g, index) of getGameObjects()" :key="index" :value="g.type">{{ g.game_name }}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="my-4">
+                    <h3>{{ t("timers") }}</h3>
+                    <select>
+                      <option v-for="(timer, index) of timers" :key="index" :value="timer">{{ timer }} {{ t("seconds") }}</option>
+                    </select>
+                  </div>
+                  <div class="my-4">
+                    <h3>{{ t("rounds") }}</h3>
+                    <select>
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="15">15</option>
+                      <option value="20">20</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-12 d-flex justify-content-center align-items-center mt-4">
+                  <button class="btn d-flex justify-content-center align-items-center mx-5 py-3" @click="logout">
+                    <Icon class="iconify me-3" name="tabler:logout-2" />
+                    <span>{{ t("logout") }}</span>
+                  </button>
+                  <button class="btn d-flex justify-content-center align-items-center mx-5 py-3" @click="pickWord">
+                    <Icon class="iconify me-3" name="ph:play-duotone" />
+                    <span>{{ t("start") }}</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -115,6 +165,10 @@ definePageMeta({ middleware: "session" });
 export default {
   data() {
     return {
+      lang: "en",
+      categories: null,
+      timers: [30, 60, 90],
+      rounds: [5, 10, 15, 20],
       client: null,
       chat_limit: 12,
       comment: [],
@@ -136,19 +190,42 @@ export default {
       points: 1,
       session: useUserSession(),
       gameStarted: false,
+      wordPicking: false,
       out: false,
-      up: true
+      up: true,
+      choosenCategory: null,
+      choosenGame: null,
+      randomObjects: []
     };
+  },
+  watch: {
+    lang (val) {
+      locale.setLanguage(val);
+      this.categories = getCategoryObjects();
+    },
+    choosenCategory (val) {
+      this.choosenCategory = val;
+      if (val === "games") {
+        this.choosenGame = getGameObjects()[0].type;
+      } else {
+        this.choosenGame = null;
+      }
+    }
   },
   beforeUnmount() {
     this.client.disconnect();
-    window.removeEventListener("resize", this.adjustScale);
+    window.removeEventListener("resize", () => adjustScale(document));
   },
-  mounted () {
-    this.adjustScale();
-    window.addEventListener("resize", this.adjustScale);
+  created() {
     this.loginClient = this.session.user.login;
     this.userClient = this.session.user.display_name;
+    const categoryObjects = getCategoryObjects();
+    this.categories = categoryObjects;
+    this.choosenCategory = categoryObjects[0].type;
+  },
+  mounted () {
+    adjustScale(document);
+    window.addEventListener("resize", () => adjustScale(document));
     this.client = new this.tmi.Client({
       connection: { secure: true, reconnect: true },
       channels: [this.userClient], // Twitch Channel
@@ -169,9 +246,29 @@ export default {
     },
     startGame() {
       this.gameStarted = true;
+      this.wordPicking = false;
+    },
+    pickWord() {
+      this.wordPicking = true;
+      this.randomize();
+    },
+    randomize () {
+      const options = randomOptionsHandler(this.choosenCategory, this.choosenGame);
+      const length = this.choosenCategory == "games" ? getObjectLength(this.choosenGame) : getObjectLength(this.choosenCategory);
+      const random1 = locale.getRandomObject(this.choosenCategory, options);
+      let random2;
+      if (length > 1) {
+        do {
+          random2 = locale.getRandomObject(this.choosenCategory, options);
+        } while (random1 === random2);
+        this.randomObjects = [random1, random2];
+      } else {
+        this.randomObjects = [random1];
+      }
     },
     stopGame() {
       this.gameStarted = false;
+      this.wordPicking = false;
       this.undoHistory = [];
       this.redoHistory = [];
       this.mode("clear");
@@ -183,15 +280,15 @@ export default {
     },
     getStrokeColor(event) {
       this.color = event.target.value;
-      this.ctx.strokeStyle = this.color; 
+      this.ctx.strokeStyle = this.color;
     },
     getLineSize(event) {
       this.lineSize = event.target.value;
-      this.ctx.lineWidth = this.toolMode === "brush" ? parseInt(this.lineSize) * 0.02 : this.lineSize; 
+      this.ctx.lineWidth = this.toolMode === "brush" ? parseInt(this.lineSize) * 0.02 : this.lineSize;
     },
     setColor(color) {
       this.color = color;
-      this.ctx.strokeStyle = this.color; 
+      this.ctx.strokeStyle = this.color;
     },
     startDrawing (event, type) {
       const rect = event.target.getBoundingClientRect();
@@ -201,21 +298,21 @@ export default {
       if (["pen", "eraser", "brush"].includes(this.toolMode)) {
         this.ctx.globalCompositeOperation = this.toolMode === "eraser" ? "destination-out" : "source-over";
         this.points = this.toolMode === "brush" ? parseInt(this.lineSize) + 4 : 1;
-        this.drawing = true;   
+        this.drawing = true;
         [this.x, this.y] = [x, y];
         this.ctx.beginPath();
         for (let i = 0; i < this.points; i ++) {
           this.ctx.rect(this.x + i,this.y + i,0,0,Math.PI*2,false);
-        } 
+        }
         this.ctx.stroke();
         this.ctx.globalCompositeOperation="source-over";
       } else {
-        this.drawing = false; 
+        this.drawing = false;
         const imageData = this.ctx.getImageData(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
         [this.x, this.y] = [x, y];
         floodFill(imageData, this.color, this.x, this.y);
         this.ctx.putImageData(imageData, 0, 0);
-      }  
+      }
     },
     stopDrawing () {
       this.drawing = false;
@@ -233,7 +330,7 @@ export default {
       for (let i = 0; i < this.points; i++) {
         this.ctx.moveTo(this.x + i, this.y + i);
         this.ctx.lineTo(x + i, y + i);
-      } 
+      }
       this.ctx.stroke();
       [this.x, this.y] = [x, y];
       this.ctx.globalCompositeOperation="source-over";
@@ -272,7 +369,6 @@ export default {
       this.ctx.lineWidth = this.toolMode === "brush" ? parseInt(this.lineSize) * 0.02 : this.lineSize;
       if (mode === "clear") {
         this.ctx.globalCompositeOperation="destination-out";
-
         this.ctx.rect(1,1,this.$refs.canvas.width,this.$refs.canvas.height,Math.PI*2,false);
         this.ctx.fill();
         this.ctx.stroke();
@@ -312,18 +408,6 @@ export default {
       this.ctx.lineJoin = "round";
       this.ctx.lineCap = "round";
       this.ctx.lineWidth = this.lineSize;
-    },
-    adjustScale() {
-      const referenceWidth = 1920;
-      const referenceHeight = 940;
-      const currentWidth = document.documentElement.clientWidth;
-      const currentHeight = document.documentElement.clientHeight;
-      const scaleX = currentWidth / referenceWidth;
-      const scaleY = currentHeight / referenceHeight;
-      console.log(scaleY);
-      const scale = Math.min(scaleX, scaleY);
-      const app = document.getElementById("game");
-      app.style.transform = `translate(-50%, -50%) scale(${scale})`;
     },
   },
 };
