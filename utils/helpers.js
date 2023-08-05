@@ -1,4 +1,4 @@
-import jp from "jsonpath";
+
 export const defaultColors = () => {
   return {
     black: "#000000",
@@ -64,7 +64,8 @@ export const randomOptionsHandler = (type) => {
   return options;
 };
 
+/*
 export const getObjectLength = (type) => {
   const length = jp.query(locale.getCategoryObjects(), `$..[?(@.id=="${type}")]..words`)[0];
   return Object.keys(length).length;
-};
+};*/
