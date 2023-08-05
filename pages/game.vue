@@ -84,6 +84,9 @@ definePageMeta({ middleware: "session" });
                 <Icon class="iconify" name="ph:x-bold" />
               </button>
             </div>
+            <div v-if="!wordPicking || !gameStarted" :class="`top-info username position-absolute justify-content-center mt-3 d-flex`">
+              <h2 class="m-0 fw-bold">{{ userClient }}</h2>
+            </div>
             <div :class="` canvas-box ${gameStarted ? `d-block` : `d-none`}`">
               <canvas ref="canvas"
                       tabindex="0"
@@ -102,39 +105,48 @@ definePageMeta({ middleware: "session" });
             </div>
             <div :class="`justify-content-center align-content-center ${!gameStarted && wordPicking ? `picking` : null } ${!gameStarted && wordPicking || !gameStarted && !wordPicking ? `d-block` : `d-none`}`">
               <div v-if="!wordPicking" id="start" class="row justify-content-center align-content-center">
-                <div class="col-12 d-flex justify-content-center align-items-center">
-                  <h1>{{ userClient }}</h1>
-                </div>
-                <div class="col-12 d-block justify-content-center align-items-center">
-                  <div class="my-4">
-                    <h3>{{ t("language") }}</h3>
+                <div class="col-12 w-75">
+                  <div class="mb-5">
+                    <div class="d-flex align-items-center mb-2">
+                      <Icon class="iconify h2 m-0" name="ph:globe-simple-duotone" />
+                      <span class="fw-bold h3 m-0">{{ t("language") }}</span>
+                    </div>
                     <select v-model="lang">
-                      <option value="en">ENGLISH</option>
-                      <option value="es">SPANISH</option>
+                      <option value="en">{{ t("english") }}</option>
+                      <option value="es">{{ t("spanish") }}</option>
                     </select>
                   </div>
-                  <div class="my-4 d-flex">
-                    <div>
-                      <h3>{{ t("word_category") }}</h3>
+                  <div class="my-5 d-flex">
+                    <div class="col-7">
+                      <div class="d-flex align-items-center mb-2">
+                        <Icon class="iconify h2 m-0" name="ph:list-bullets-bold" />
+                        <span class="fw-bold h3 m-0">{{ t("word_category") }}</span>
+                      </div>
                       <select v-model="choosenCategory">
                         <option v-for="(c, index) of categories" :key="index" :value="c.type">{{ c.title }}</option>
                       </select>
                     </div>
-                    <div v-if="choosenCategory ==`games`" class="ms-5">
-                      <h3>{{ t("videogames") }}</h3>
+                    <div v-if="choosenCategory ==`games`" class="col-5">
+                      <h3 class="fw-bold">{{ t("videogames") }}</h3>
                       <select v-model="choosenGame">
                         <option v-for="(g, index) of getGameObjects()" :key="index" :value="g.type">{{ g.game_name }}</option>
                       </select>
                     </div>
                   </div>
-                  <div class="my-4">
-                    <h3>{{ t("timers") }}</h3>
+                  <div class="my-5">
+                    <div class="d-flex align-items-center mb-2">
+                      <Icon class="iconify h2 m-0" name="ph:clock-countdown-duotone" />
+                      <span class="fw-bold h3 m-0">{{ t("timer") }}</span>
+                    </div>
                     <select>
                       <option v-for="(timer, index) of timers" :key="index" :value="timer">{{ timer }} {{ t("seconds") }}</option>
                     </select>
                   </div>
-                  <div class="my-4">
-                    <h3>{{ t("rounds") }}</h3>
+                  <div class="mt-5">
+                    <div class="d-flex align-items-center mb-2">
+                      <Icon class="iconify h2 m-0" name="ph:arrows-clockwise-duotone" />
+                      <span class="fw-bold h3 m-0">{{ t("rounds") }}</span>
+                    </div>
                     <select>
                       <option value="5">5</option>
                       <option value="10">10</option>
@@ -143,14 +155,14 @@ definePageMeta({ middleware: "session" });
                     </select>
                   </div>
                 </div>
-                <div class="col-12 d-flex justify-content-center align-items-center mt-4">
-                  <button class="btn d-flex justify-content-center align-items-center mx-5 py-3" @click="logout">
+                <div class="col-12 d-flex justify-content-center align-items-center mt-5">
+                  <button class="btn d-flex justify-content-center align-items-center mx-5 py-3 text-white logout" @click="logout">
                     <Icon class="iconify me-3" name="tabler:logout-2" />
-                    <span>{{ t("logout") }}</span>
+                    <span class="fw-bold">{{ t("logout") }}</span>
                   </button>
-                  <button class="btn d-flex justify-content-center align-items-center mx-5 py-3" @click="pickWord">
+                  <button class="btn d-flex justify-content-center align-items-center mx-5 py-3 text-white gameStart" @click="pickWord">
                     <Icon class="iconify me-3" name="ph:play-duotone" />
-                    <span>{{ t("start") }}</span>
+                    <span class="fw-bold">{{ t("start") }}</span>
                   </button>
                 </div>
               </div>

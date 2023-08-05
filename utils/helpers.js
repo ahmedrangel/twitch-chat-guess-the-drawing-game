@@ -48,7 +48,7 @@ export const getGameObjects = () => {
   objs.forEach((el) => {
     objArray.push({
       type: el,
-      game_name: locale.getCategoryObjects()["games"]["game_type"][el].game_name
+      game_name: locale.getCategoryObjects()["games"]["game_type"][el].game_name.toUpperCase()
     });
   });
   return objArray;
@@ -64,7 +64,6 @@ export const randomOptionsHandler = (type) => {
   }
   return options;
 };
-
 
 export const getObjectLength = (type) => {
   const length = JSONPath({path: `$..[?(@.id=="${type}")]..words`, json: locale.getCategoryObjects()})[0];
