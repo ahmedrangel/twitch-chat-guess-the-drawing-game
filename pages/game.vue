@@ -92,7 +92,7 @@ definePageMeta({ middleware: "session" });
               </button>
             </div>
             <div v-if="wordPicking || gameStarted" :class="`top-info username position-absolute justify-content-start mt-3 d-flex`">
-              <h2 class="m-0">Ronda: {{ round }}/{{ choosenRound }}</h2>
+              <h2 class="m-0">{{ t("round") }}: {{ round }}/{{ choosenRound }}</h2>
             </div>
             <div v-if="!wordPicking || !gameStarted" :class="`top-info username position-absolute justify-content-center mt-3 d-flex`">
               <h2 class="m-0">{{ userClient.toUpperCase() }}</h2>
@@ -267,6 +267,7 @@ export default {
         this.guessWord = null;
         this.randomize();
         this.round++;
+        this.mode("clear");
         this.wordPicking = true;
         this.gameStarted = false;
         if (this.round > this.choosenRound) {
