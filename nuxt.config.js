@@ -12,7 +12,17 @@ export default defineNuxtConfig({
       viewport: "width=device-width, user-scalable=no",
       htmlAttrs: {
         lang: "en",
-      }
+      },
+      link: [
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css?family=Lilita+One",
+        },
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css?family=Balsamiq+Sans",
+        },
+      ],
     }
   },
   modules: [

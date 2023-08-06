@@ -8,22 +8,25 @@ definePageMeta({ middleware: "session" });
         <div class="col-4">
           <div class="row row-cols-1 g-0">
             <div id="chat-scores" class="col d-flex p-3">
-              <div class="overflow-hidden d-flex justify-content-end flex-column">
-                <p v-for="(chat, index) of comment" :key="index" class="col-12 mb-1">
-                  <b>{{ chat.display_name }}:</b> {{ chat.message }}
-                </p>
+              <div class="chat overflow-hidden d-flex justify-content-end flex-column">
+                <div v-for="(chat, index) of comment" :key="index" class="col-12 mb-0">
+                  <span class="chat-names">{{ chat.display_name }}</span>
+                </div>
               </div>
             </div>
             <div id="twitch-chat" class="col d-flex p-3">
-              <div class="overflow-hidden d-flex justify-content-end flex-column">
-                <p v-for="(chat, index) of comment" :key="index" class="col-12 mb-1">
-                  <b>{{ chat.display_name }}:</b> {{ chat.message }}
-                </p>
+              <div class="chat overflow-hidden d-flex justify-content-end flex-column">
+                <div v-for="(chat, index) of comment" :key="index" class="col-12 mb-0">
+                  <span class="chat-names">{{ chat.display_name }}:</span> <span class="chat-messages">{{ chat.message }}</span>
+                </div>
               </div>
             </div>
             <div id="board-tools" class="col text-center d-flex align-items-center justify-content-center p-3">
-              <div v-if="wordPicking">
-                <div v-for="(w, index) of randomObjects" :key="index" @click="startGame">{{ w }}</div>
+              <div v-if="wordPicking" id="picker">
+                <h2>ELIGE UNA PALABRA</h2>
+                <div v-for="(w, index) of randomObjects" :key="index" class="btn d-flex justify-content-center align-items-center my-3 py-3 px-5" @click="startGame">
+                  <h2 class="m-0">{{ w }}</h2>
+                </div>
               </div>
               <div v-else-if="gameStarted">
                 <div id="tools" class="my-2">
@@ -85,7 +88,7 @@ definePageMeta({ middleware: "session" });
               </button>
             </div>
             <div v-if="!wordPicking || !gameStarted" :class="`top-info username position-absolute justify-content-center mt-3 d-flex`">
-              <h2 class="m-0 fw-bold">{{ userClient }}</h2>
+              <h2 class="m-0">{{ userClient.toUpperCase() }}</h2>
             </div>
             <div :class="` canvas-box ${gameStarted ? `d-block` : `d-none`}`">
               <canvas ref="canvas"
@@ -108,8 +111,8 @@ definePageMeta({ middleware: "session" });
                 <div class="col-12 w-75">
                   <div class="mb-5">
                     <div class="d-flex align-items-center mb-2">
-                      <Icon class="iconify h2 m-0" name="ph:globe-simple-duotone" />
-                      <span class="fw-bold h3 m-0">{{ t("language") }}</span>
+                      <Icon class="iconify h2 me-2 my-0" name="ph:globe-simple-duotone" />
+                      <span class=" h3 m-0">{{ t("language") }}</span>
                     </div>
                     <select v-model="lang">
                       <option value="en">{{ t("english") }}</option>
@@ -119,15 +122,15 @@ definePageMeta({ middleware: "session" });
                   <div class="my-5 d-flex">
                     <div class="col-7">
                       <div class="d-flex align-items-center mb-2">
-                        <Icon class="iconify h2 m-0" name="ph:list-bullets-bold" />
-                        <span class="fw-bold h3 m-0">{{ t("word_category") }}</span>
+                        <Icon class="iconify h2 me-2 my-0" name="ph:list-bullets-bold" />
+                        <span class=" h3 m-0">{{ t("word_category") }}</span>
                       </div>
                       <select v-model="choosenCategory">
                         <option v-for="(c, index) of categories" :key="index" :value="c.type">{{ c.title }}</option>
                       </select>
                     </div>
                     <div v-if="choosenCategory ==`games`" class="col-5">
-                      <h3 class="fw-bold">{{ t("videogames") }}</h3>
+                      <h3 class="">{{ t("videogames") }}</h3>
                       <select v-model="choosenGame">
                         <option v-for="(g, index) of getGameObjects()" :key="index" :value="g.type">{{ g.game_name }}</option>
                       </select>
@@ -135,8 +138,8 @@ definePageMeta({ middleware: "session" });
                   </div>
                   <div class="my-5">
                     <div class="d-flex align-items-center mb-2">
-                      <Icon class="iconify h2 m-0" name="ph:clock-countdown-duotone" />
-                      <span class="fw-bold h3 m-0">{{ t("timer") }}</span>
+                      <Icon class="iconify h2 me-2 my-0" name="ph:clock-countdown-duotone" />
+                      <span class=" h3 m-0">{{ t("timer") }}</span>
                     </div>
                     <select>
                       <option v-for="(timer, index) of timers" :key="index" :value="timer">{{ timer }} {{ t("seconds") }}</option>
@@ -144,8 +147,8 @@ definePageMeta({ middleware: "session" });
                   </div>
                   <div class="mt-5">
                     <div class="d-flex align-items-center mb-2">
-                      <Icon class="iconify h2 m-0" name="ph:arrows-clockwise-duotone" />
-                      <span class="fw-bold h3 m-0">{{ t("rounds") }}</span>
+                      <Icon class="iconify h2 me-2 my-0" name="ph:arrows-clockwise-duotone" />
+                      <span class=" h3 m-0">{{ t("rounds") }}</span>
                     </div>
                     <select>
                       <option value="5">5</option>
@@ -158,11 +161,11 @@ definePageMeta({ middleware: "session" });
                 <div class="col-12 d-flex justify-content-center align-items-center mt-5">
                   <button class="btn d-flex justify-content-center align-items-center mx-5 py-3 text-white logout" @click="logout">
                     <Icon class="iconify me-3" name="tabler:logout-2" />
-                    <span class="fw-bold">{{ t("logout") }}</span>
+                    <span class="">{{ t("logout") }}</span>
                   </button>
                   <button class="btn d-flex justify-content-center align-items-center mx-5 py-3 text-white gameStart" @click="pickWord">
                     <Icon class="iconify me-3" name="ph:play-duotone" />
-                    <span class="fw-bold">{{ t("start") }}</span>
+                    <span class="">{{ t("start") }}</span>
                   </button>
                 </div>
               </div>
@@ -182,7 +185,7 @@ export default {
       timers: [30, 60, 90],
       rounds: [5, 10, 15, 20],
       client: null,
-      chat_limit: 12,
+      chat_limit: 8,
       comment: [],
       color: "#000000",
       x: 0,
