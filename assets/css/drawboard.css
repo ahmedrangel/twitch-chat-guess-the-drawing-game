@@ -25,7 +25,7 @@ select {
 option {
   color:var(--color-black);
   font-weight: bold;
-  font-size: .8rem;
+  font-size: 1rem;
 }
 
 html, body {

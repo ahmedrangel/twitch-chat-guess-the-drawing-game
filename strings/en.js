@@ -4,7 +4,7 @@ export default {
   spanish: "Spanish",
   english: "English",
   start: "Start",
-  logout: "Logout",
+  logout: "Log out",
   timer: "Timer",
   rounds: "Rounds",
   seconds: "Seconds",
