@@ -7,7 +7,10 @@ export default {
   logout: "Salir",
   timer: "Temporizador",
   rounds: "Rondas",
+  round: "Ronda",
   seconds: "Segundos",
   word_category: "Categoría",
-  videogames: "Videojuego"
+  videogames: "Videojuego",
+  draw_this_word: "Dibuja esta palabra",
+  choose_a_word: "Elige una palabra"
 };

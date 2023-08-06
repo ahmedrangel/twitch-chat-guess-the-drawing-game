@@ -9,7 +9,7 @@ definePageMeta({ middleware: "session" });
           <div class="row row-cols-1 g-0">
             <div id="chat-scores" class="col d-flex p-3">
               <div class="chat overflow-hidden d-flex justify-content-end flex-column">
-                <div v-for="(chat, index) of comment" :key="index" class="col-12 mb-0">
+                <div v-for="(chat, index) of comment" :key="index < 5" class="col-12 mb-0">
                   <span class="chat-names">{{ chat.display_name }}</span>
                 </div>
               </div>
@@ -23,12 +23,16 @@ definePageMeta({ middleware: "session" });
             </div>
             <div id="board-tools" class="col text-center d-flex align-items-center justify-content-center p-3">
               <div v-if="wordPicking" id="picker">
-                <h2>ELIGE UNA PALABRA</h2>
-                <div v-for="(w, index) of randomObjects" :key="index" class="btn d-flex justify-content-center align-items-center my-3 py-3 px-5" @click="startGame">
+                <h2>{{ t("choose_a_word") }}</h2>
+                <div v-for="(w, index) of randomObjects" :key="index" class="btn d-flex justify-content-center align-items-center my-3 py-3 px-5" @click="startGame(w)">
                   <h2 class="m-0">{{ w }}</h2>
                 </div>
               </div>
               <div v-else-if="gameStarted">
+                <div id="guess" class="mt-2 mb-3">
+                  <h5 class="m-0">{{ t("draw_this_word") }}</h5>
+                  <h3 class="m-0 guess-word">{{ guessWord }}</h3>
+                </div>
                 <div id="tools" class="my-2">
                   <button :class="`btn me-1 ${toolMode === `pen` ? `btn-active` : ``}`" @click="mode(`pen`)">
                     <span class="m-0 h3 d-flex align-items-center justify-content-center">
@@ -86,6 +90,9 @@ definePageMeta({ middleware: "session" });
               <button class="btn" @click="stopGame">
                 <Icon class="iconify" name="ph:x-bold" />
               </button>
+            </div>
+            <div v-if="wordPicking || gameStarted" :class="`top-info username position-absolute justify-content-start mt-3 d-flex`">
+              <h2 class="m-0">Ronda: {{ round }}/{{ choosenRound }}</h2>
             </div>
             <div v-if="!wordPicking || !gameStarted" :class="`top-info username position-absolute justify-content-center mt-3 d-flex`">
               <h2 class="m-0">{{ userClient.toUpperCase() }}</h2>
@@ -150,7 +157,7 @@ definePageMeta({ middleware: "session" });
                       <Icon class="iconify h2 me-2 my-0" name="ph:arrows-clockwise-duotone" />
                       <span class=" h3 m-0">{{ t("rounds") }}</span>
                     </div>
-                    <select>
+                    <select v-model="choosenRound">
                       <option value="5">5</option>
                       <option value="10">10</option>
                       <option value="15">15</option>
@@ -185,7 +192,7 @@ export default {
       timers: [30, 60, 90],
       rounds: [5, 10, 15, 20],
       client: null,
-      chat_limit: 8,
+      chat_limit: 9,
       comment: [],
       color: "#000000",
       x: 0,
@@ -210,7 +217,11 @@ export default {
       up: true,
       choosenCategory: null,
       choosenGame: null,
-      randomObjects: []
+      randomObjects: [],
+      guessWord: null,
+      guessers: [],
+      round: 1,
+      choosenRound: 5
     };
   },
   watch: {
@@ -243,12 +254,26 @@ export default {
     window.addEventListener("resize", () => adjustScale(document));
     this.client = new this.tmi.Client({
       connection: { secure: true, reconnect: true },
-      channels: [this.userClient], // Twitch Channel
+      channels: [this.userClient, "whimsiez", "ahmed_r"], // Twitch Channel
     });
     this.client.connect();
     this.client.on("message", (channel, tags, message) => {
+      const display_name = tags["display-name"];
       this.comment.length >= this.chat_limit ? this.comment.shift() : null;
-      this.comment.push({display_name: tags["display-name"], message: message});
+      this.comment.push({display_name: display_name, message: message});
+      if (this.guessWord !== null && message.toLowerCase() === this.guessWord.toLowerCase() && this.round <= this.choosenRound) {
+        console.log(display_name + " adivinó la palabra: " + this.guessWord);
+        this.guessers.push({display_name: display_name, score: 100});
+        this.guessWord = null;
+        this.randomize();
+        this.round++;
+        this.wordPicking = true;
+        this.gameStarted = false;
+        if (this.round > this.choosenRound) {
+          this.stopGame();
+        }
+      }
+      
     });
     this.drawingBoard();
     document.addEventListener("mouseup", (event) => { this.outUpControl(event); });
@@ -259,9 +284,10 @@ export default {
       this.session.clear();
       this.$router.replace("/");
     },
-    startGame() {
+    startGame(word) {
       this.gameStarted = true;
       this.wordPicking = false;
+      this.guessWord = word;
     },
     pickWord() {
       this.wordPicking = true;
@@ -291,7 +317,8 @@ export default {
       this.toolMode = "pen";
       this.color = "#000000";
       this.ctx.strokeStyle = this.color;
-      this.comment = [];
+      this.guessWord = null;
+      this.round = 1;
     },
     getStrokeColor(event) {
       this.color = event.target.value;

@@ -70,24 +70,35 @@ canvas {
 }
 
 #twitch-chat {
-  font-size: 1.3rem;
   overflow: hidden;
 }
 
-#twitch-chat .chat {
-  margin-bottom: -3px;
+#twitch-chat .chat, #chat-scores .chat {
+  margin-bottom: -5px;
 }
 
 .chat-messages {
   font-family: "Balsamiq Sans"!important;
 }
 
-.chat-names {
+#twitch-chat .chat-names {
   font-size: 1.35rem;
 }
 
-#board-tools, #chat-scores, #twitch-chat {
+#chat-scores .chat-names {
+  font-size: 1.62rem;
+}
+
+ #twitch-chat {
   height: 292px;
+}
+
+#board-tools {
+  height: 355px
+}
+
+#chat-scores {
+  height: 229px;
 }
 
 #twitch-chat, #board-tools, #chat-scores {
@@ -97,7 +108,7 @@ canvas {
 }
 
 #chat-scores, #twitch-chat {
-  font-size: 1.45rem;
+  font-size: 1.25rem;
   margin-bottom: 17px;
 }
 
@@ -133,7 +144,7 @@ canvas {
   border: 2px solid var(--color-black);
   cursor: pointer;
   width: 32px;
-  height: 48px;
+  height: 46px;
 }
 
 .palette input {
@@ -141,7 +152,7 @@ canvas {
   border: 2px solid var(--color-black);
   cursor: pointer;
   width: 68px;
-  height: 48px;
+  height: 46px;
 }
 
 input[type=range] {
@@ -149,7 +160,7 @@ input[type=range] {
 }
 
 #tools span {
-  font-size: 3.5rem!important;
+  font-size: 3.2rem!important;
 }
 
 #tools .btn, .top-info .btn {
