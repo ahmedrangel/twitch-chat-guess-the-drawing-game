@@ -3,6 +3,42 @@ definePageMeta({ middleware: "session" });
 </script>
 <template>
   <main class="my-2 centered-content">
+    <!-- Modal Guessed -->
+    <div id="modal-g" ref="modal_g" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-body text-center py-4">
+            <h1 class="whoguessed text-break">{{ whoGuessed }}</h1>
+            <h2 class="m-0">{{ t("guessed_it") }}</h2>
+            <h3 class="fst-italic mt-4">{{ guessWord }}</h3>
+            <img class="img-fluid my-4" :src="imagePng">
+            <button type="button" class="btn mt-4 py-2" data-bs-dismiss="modal" @click="continueNext()">
+              <div class="d-flex align-items-center justify-content-center">
+                <h2 class="m-0">{{ t("continue") }}<Icon class="ms-2 iconify" name="ph:caret-double-right-bold" /></h2>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal No Guessed -->
+    <div id="modal-n" ref="modal_n" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-body text-center py-4">
+            <h1 class="whoguessed no-one-guessed text-break">{{ t("no_one_guessed") }} :(</h1>
+            <h2 class="m-0">{{ t("try_again") }}</h2>
+            <h3 class="fst-italic mt-4">{{ guessWord }}</h3>
+            <img class="img-fluid my-4" :src="imagePng">
+            <button type="button" class="btn mt-4 py-2" data-bs-dismiss="modal" @click="continueNext()">
+              <div class="d-flex align-items-center justify-content-center">
+                <h2 class="m-0">{{ t("continue") }}<Icon class="ms-2 iconify" name="ph:caret-double-right-bold" /></h2>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
     <div id="game" @keydown="keydown" @keyup="keyup">
       <div class="row row-cols-2 g-4">
         <div class="col-4">
@@ -87,7 +123,7 @@ definePageMeta({ middleware: "session" });
         <div class="col-8 p-0 pb-4 bg-canvas">
           <div id="canvas">
             <div :class="`top-info d-flex justify-content-end mt-3 ${wordPicking || gameStarted ? `visible` : `invisible`}`">
-              <button class="btn" @click="stopGame">
+              <button class="btn" @click="stopGame()">
                 <Icon class="iconify" name="ph:x-bold" />
               </button>
             </div>
@@ -148,8 +184,8 @@ definePageMeta({ middleware: "session" });
                       <Icon class="iconify h2 me-2 my-0" name="ph:clock-countdown-duotone" />
                       <span class=" h3 m-0">{{ t("timer") }}</span>
                     </div>
-                    <select>
-                      <option v-for="(timer, index) of timers" :key="index" :value="timer">{{ timer }} {{ t("seconds") }}</option>
+                    <select v-model="choosenTimer">
+                      <option v-for="(v, index) of timers" :key="index" :value="v">{{ timeLeft(v * 1000) }} ({{ v }} {{ t("seconds") }})</option>
                     </select>
                   </div>
                   <div class="mt-5">
@@ -158,22 +194,30 @@ definePageMeta({ middleware: "session" });
                       <span class=" h3 m-0">{{ t("rounds") }}</span>
                     </div>
                     <select v-model="choosenRound">
-                      <option value="5">5</option>
-                      <option value="10">10</option>
-                      <option value="15">15</option>
-                      <option value="20">20</option>
+                      <option v-for="(v, index) of rounds" :key="index" :value="v">{{ v }}</option>
                     </select>
                   </div>
                 </div>
                 <div class="col-12 d-flex justify-content-center align-items-center mt-5">
-                  <button class="btn d-flex justify-content-center align-items-center mx-5 py-3 text-white logout" @click="logout">
+                  <button class="btn d-flex justify-content-center align-items-center mx-5 py-3 text-white logout" @click="logout()">
                     <Icon class="iconify me-3" name="tabler:logout-2" />
                     <span class="">{{ t("logout") }}</span>
                   </button>
-                  <button class="btn d-flex justify-content-center align-items-center mx-5 py-3 text-white gameStart" @click="pickWord">
+                  <button class="btn d-flex justify-content-center align-items-center mx-5 py-3 text-white gameStart" @click="pickWord()">
                     <Icon class="iconify me-3" name="ph:play-duotone" />
                     <span class="">{{ t("start") }}</span>
                   </button>
+                </div>
+              </div>
+            </div>
+            <div id="progress" class="w-100">
+              <div class="d-flex px-5 d-flex justify-content-center align-items-center">
+                <div class="d-flex justify-content-center align-items-center">
+                  <Icon class="iconify h2 me-2 my-0" name="ph:alarm-duotone" />
+                  <h4 class="me-2 mb-0 countdown-timer">{{ timeLeft(timer) }}</h4>
+                </div>
+                <div class="progress w-100">
+                  <div :class="`progress-bar ${gameStarted ? `progress-bar-striped` : ``} progress-bar-animated`" role="progressbar" :aria-valuenow="`${percentage(timer / 1000, choosenTimer)}`" aria-valuemin="0" aria-valuemax="100" :style="`width: ${percentage(timer / 1000, choosenTimer)}%`" />
                 </div>
               </div>
             </div>
@@ -189,7 +233,7 @@ export default {
     return {
       lang: "en",
       categories: null,
-      timers: [30, 60, 90],
+      timers: [30, 60, 90, 120],
       rounds: [5, 10, 15, 20],
       client: null,
       chat_limit: 9,
@@ -217,11 +261,17 @@ export default {
       up: true,
       choosenCategory: null,
       choosenGame: null,
+      choosenTimer: null,
+      choosenRound: null,
       randomObjects: [],
       guessWord: null,
       guessers: [],
       round: 1,
-      choosenRound: 5
+      whoGuessed: null,
+      imagePng: null,
+      timer: 0,
+      gameFinished: true,
+      is_guessed: false,
     };
   },
   watch: {
@@ -248,33 +298,30 @@ export default {
     const categoryObjects = getCategoryObjects();
     this.categories = categoryObjects;
     this.choosenCategory = categoryObjects[0].type;
+    this.choosenRound = this.rounds[0];
+    this.choosenTimer = this.timers[0];
   },
   mounted () {
     adjustScale(document);
     window.addEventListener("resize", () => adjustScale(document));
     this.client = new this.tmi.Client({
       connection: { secure: true, reconnect: true },
-      channels: [this.userClient, "whimsiez", "ahmed_r"], // Twitch Channel
+      channels: [this.userClient, "husher_x", "ahmed_r"], // Twitch Channel
     });
     this.client.connect();
     this.client.on("message", (channel, tags, message) => {
       const display_name = tags["display-name"];
       this.comment.length >= this.chat_limit ? this.comment.shift() : null;
       this.comment.push({display_name: display_name, message: message});
-      if (this.guessWord !== null && message.toLowerCase() === this.guessWord.toLowerCase() && this.round <= this.choosenRound) {
+      if (!this.is_guessed && removeDiacritics(message).toLowerCase() === removeDiacritics(this.guessWord).toLowerCase() &&
+          this.round <= this.choosenRound) {
+        this.is_guessed = true;
         console.log(display_name + " adivinó la palabra: " + this.guessWord);
+        this.whoGuessed = display_name.toUpperCase();
         this.guessers.push({display_name: display_name, score: 100});
-        this.guessWord = null;
-        this.randomize();
-        this.round++;
-        this.mode("clear");
-        this.wordPicking = true;
-        this.gameStarted = false;
-        if (this.round > this.choosenRound) {
-          this.stopGame();
-        }
+        this.imagePng = this.$refs.canvas.toDataURL("image/png");
+        this.$nuxt.$bootstrap.showModal(this.$refs.modal_g);
       }
-      
     });
     this.drawingBoard();
     document.addEventListener("mouseup", (event) => { this.outUpControl(event); });
@@ -289,9 +336,11 @@ export default {
       this.gameStarted = true;
       this.wordPicking = false;
       this.guessWord = word;
+      this.countdown();
     },
     pickWord() {
       this.wordPicking = true;
+      this.timer = this.choosenTimer * 1000;
       this.randomize();
     },
     randomize () {
@@ -320,6 +369,12 @@ export default {
       this.ctx.strokeStyle = this.color;
       this.guessWord = null;
       this.round = 1;
+      this.whoGuessed = null;
+      this.timer = 0;
+    },
+    cancelGame() {
+      this.stopGame();
+      this.gameFinished = true;
     },
     getStrokeColor(event) {
       this.color = event.target.value;
@@ -452,6 +507,33 @@ export default {
       this.ctx.lineCap = "round";
       this.ctx.lineWidth = this.lineSize;
     },
+    continueNext() {
+      this.is_guessed = false;
+      this.timer = this.choosenTimer * 1000;
+      this.randomize();
+      this.round++;
+      this.mode("clear");
+      this.wordPicking = true;
+      this.gameStarted = false;
+      if (this.round > this.choosenRound) {
+        this.stopGame();
+      }
+    },
+    countdown () {
+      this.timer = this.choosenTimer * 1000;
+      const interval = setInterval(() => {
+        console.log(this.is_guessed);
+        if (parseInt(this.timer) <= 0 && !this.is_guessed && this.gameStarted) {
+          clearInterval(interval);
+          this.imagePng = this.$refs.canvas.toDataURL("image/png");
+          this.$nuxt.$bootstrap.showModal(this.$refs.modal_n);
+        } else if (parseInt(this.timer) > 0 && this.is_guessed || !this.gameStarted && !this.wordPicking) {
+          clearInterval(interval);
+        } else {
+          this.timer = this.timer - 100;
+        }
+      }, 100);
+    }
   },
 };
 </script>

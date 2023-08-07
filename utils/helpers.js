@@ -26,7 +26,10 @@ export const adjustScale = (document) => {
   const scaleY = currentHeight / referenceHeight;
   const scale = Math.min(scaleX, scaleY);
   const app = document.getElementById("game");
-  app.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  const modal_g = document.getElementById("modal-g");
+  const modal_n = document.getElementById("modal-n");
+  const translate = `translate(-50%, -50%) scale(${scale})`;
+  [app.style.transform, modal_g.style.transform, modal_n.style.transform] = [translate, translate, translate];
 };
 
 export const getCategoryObjects = () => {
@@ -68,4 +71,18 @@ export const randomOptionsHandler = (type) => {
 export const getObjectLength = (type) => {
   const length = JSONPath({path: `$..[?(@.id=="${type}")]..words`, json: locale.getCategoryObjects()})[0];
   return Object.keys(length).length;
+};
+
+export const removeDiacritics = (str) => {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+};
+
+export const timeLeft = (s) => {
+  const ms = s;
+  const time = new Date(Math.ceil(ms)).toISOString().slice(14, -5);
+  return time;
+};
+
+export const percentage = (val, total) => {
+  return ((val * 100) / total).toFixed(2);
 };

@@ -12,5 +12,9 @@ export default {
   word_category: "Categoría",
   videogames: "Videojuego",
   draw_this_word: "Dibuja esta palabra",
-  choose_a_word: "Elige una palabra"
+  choose_a_word: "Elige una palabra",
+  guessed_it: "¡Ha adivinado!",
+  continue: "Continuar",
+  no_one_guessed: "Nadie ha adivinado",
+  try_again: "¡Vuelve a intentarlo!",
 };

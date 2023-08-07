@@ -1,13 +1,14 @@
 :root {
   --white: #f6f6f6;
   --select-border: #777;
-  --select-focus: #7471d3;
+  --select-focus: #5451a8;
   --select-arrow: var(--select-border);
   --bg-primary: #fbd4ff;
-  --bg-secondary: #7471d3;
+  --bg-secondary: #5451a8;
   --bg-tertiary: #0b9368;
   --bg-forth: #ffff87;
   --color-black: #090909;
+  --canvas-border-color: #d2d2d2;
 }
 
 select {
@@ -46,13 +47,13 @@ body {
 }
 
 #start, .canvas-box, .picking {
-  border: 3px #d2d2d2 solid;
+  border: 3px var(--canvas-border-color) solid; /* border */
   margin-left: 78px;
   margin-top: 6px;
 }
 
 .canvas-box, #start, #canvas, .picking {
-  height: 825px; /* canvas height + border */
+  height: 783px; /* canvas height + border */
   width: 1137px; /* canvas width + border */
 }
 
@@ -65,7 +66,7 @@ canvas, .canvas-box, #start, .picking {
   border-radius: 20px;
 }
 canvas {
-  height: 822px;
+  height: 780px;
   width: 1134px;
 }
 
@@ -112,7 +113,7 @@ canvas {
   margin-bottom: 17px;
 }
 
-#game {
+#game, #modal-g, #modal-n {
   position: absolute;
   top: 50%;
   left: 51.3%;
@@ -240,13 +241,22 @@ select::-ms-expand {
   background-color: var(--bg-tertiary)!important;
 }
 
-#picker {
-
-  /* -webkit-text-stroke: 4px var(--color-black);
-	-webkit-text-fill-color: var(--bg-primary); */
+.modal .whoguessed, .modal .no-one-guessed {
+  font-size: 3.5rem;
 }
 
-#picker .btn {
+.modal .whoguessed {
+  -webkit-text-stroke: 2px var(--color-black);
+  -webkit-text-fill-color: var(--bg-forth);
+}
+
+.modal .no-one-guessed {
+  -webkit-text-stroke: 2px var(--color-black);
+  -webkit-text-fill-color: #ff2c2c;
+}
+
+#picker .btn, .modal .btn {
+  color: var(--color-black);
   background-color: var(--bg-forth);
   border: 3px solid var(--color-black);
 }
@@ -260,7 +270,54 @@ select::-ms-expand {
   color: var(--white);
 }
 
-.logout:hover, .gameStart:hover {
+.logout:hover, .gameStart:hover, .modal .btn:hover {
   background-color: var(--color-black)!important;
   color: var(--bg-primary)!important;
+}
+
+.modal-dialog {
+  max-width: var(--bs-modal-width);
+  margin-right: auto;
+  margin-left: auto;
+  --bs-modal-width: 1000px;
+}
+
+.modal-content {
+  background-color: var(--bg-primary);
+  border: 6px solid var(--color-black);
+  border-radius: 10px;
+}
+
+.modal img {
+  border: 6px solid var(--color-black);
+  border-radius: 10px;
+  width: 62%;
+}
+
+.modal .btn {
+  width: 62%;
+}
+
+.modal-backdrop.show {
+  opacity: .90;
+}
+
+#progress {
+  margin-left: 76px;
+  margin-top: 12px;
+}
+.progress {
+  height: 1.6rem;
+  border: 1px solid var(--bg-secondary);
+  border-radius: 20px;
+  --bs-progress-bg: var(--bg-primary);
+}
+
+.progress * {
+  background-color: var(--bg-secondary);
+  transition: .2s ease;
+}
+
+.countdown-timer {
+  width: 64px;
 }

@@ -62,7 +62,6 @@ export default {
       tape: "Cinta adhesiva",
       ruler: "Regla",
       palette: "Paleta",
-      typewriter: "Máquina de escribir",
       radio: "Radio",
       speakers: "Altavoces",
       keyboard: "Teclado",
@@ -82,13 +81,12 @@ export default {
       calendar: "Calendario",
       stamp: "Sello",
       ashtray: "Cenicero",
-      electric_kettle: "Hervidor eléctrico",
+      teapot: "Tetera",
       glass: "Vaso",
       plate: "Plato",
       spoon: "Cuchara",
       fork: "Tenedor",
       knife: "Cuchillo",
-      teaspoon: "Cucharita",
       can_opener: "Abrelatas",
       candleholder: "Candelabro"
     }

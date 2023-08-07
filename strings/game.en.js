@@ -62,7 +62,6 @@ export default {
       tape: "Tape",
       ruler: "Ruler",
       palette: "Palette",
-      typewriter: "Typewriter",
       radio: "Radio",
       speakers: "Speakers",
       keyboard: "Keyboard",
@@ -82,13 +81,12 @@ export default {
       calendar: "Calendar",
       stamp: "Stamp",
       ashtray: "Ashtray",
-      electric_kettle: "Electric Kettle",
+      teapot: "Teapot",
       glass: "Glass",
       plate: "Plate",
       spoon: "Spoon",
       fork: "Fork",
       knife: "Knife",
-      teaspoon: "Teaspoon",
       can_opener: "Can Opener",
       candleholder: "Candleholder"
     }
