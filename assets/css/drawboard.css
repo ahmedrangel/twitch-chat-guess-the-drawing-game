@@ -254,6 +254,10 @@ select::-ms-expand {
   background-color: var(--bg-tertiary)!important;
 }
 
+.modal {
+  height: auto!important;
+}
+
 .modal .whoguessed, .modal .no-one-guessed {
   font-size: 3.5rem;
 }
