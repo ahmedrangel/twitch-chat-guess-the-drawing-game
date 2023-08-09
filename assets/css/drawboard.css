@@ -367,7 +367,7 @@ select::-ms-expand {
 }
 
 .diamond {
-  filter: drop-shadow(1px 0px 1px var(--color-black)) saturate(2.5);
+  filter: drop-shadow(1px 0px 1px var(--color-black));
 }
 
 .score .chat-names {
