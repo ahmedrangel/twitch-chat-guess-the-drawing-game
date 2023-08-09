@@ -24,5 +24,6 @@ export default {
   or: "or",
   place_your_camera_here: "Place your camera here",
   before_you_start_the_game: "Before you start the game",
-  waiting_for_the_streamer_to_start_the_game: "Waiting for the streamer to start the game..."
+  waiting_for_the_streamer_to_start_the_game: "Waiting for the streamer to start the game...",
+  challenge_and_play_with_your_audience_to_guess_your_drawings: "Challenge and play with your audience to guess your drawings.",
 };
