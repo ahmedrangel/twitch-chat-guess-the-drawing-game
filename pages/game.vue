@@ -599,6 +599,11 @@ export default {
       this.mode("clear");
       this.wordPicking = true;
       this.gameStarted = false;
+      this.lineSize = 8;
+      this.ctx.lineWidth = this.lineSize;
+      this.toolMode = "pen";
+      this.color = "#000000";
+      this.ctx.strokeStyle = this.color;
       if (this.round > this.choosenRound) {
         this.gameFinished = true;
         this.gameStarted = false;
