@@ -1,0 +1,42 @@
+body {
+  position: relative;
+}
+
+#login a {
+  padding: 20px;
+  color: var(--white);
+  border: 3px solid var(--color-black);
+  background-color: var(--color-black);
+}
+
+#login a:hover {
+  padding: 20px;
+  color: var(--color-black);
+  border: 3px solid var(--color-black);
+  background-color: var(--bg-primary);
+}
+
+#login .diamond-bg {
+  width: 3000px;
+  filter: saturate(0) opacity(0.04);
+}
+
+#login .diamond-index {
+  width: 40px;
+}
+
+#login img, #login svg {
+  user-drag: none; 
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  pointer-events: none;
+}
+
+#login .drawmond {
+  -webkit-text-stroke: 2px var(--color-black);
+  -webkit-text-fill-color: var(--white);
+  font-size: 4rem;
+}
