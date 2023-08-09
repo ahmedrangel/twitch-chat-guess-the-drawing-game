@@ -431,3 +431,8 @@ select::-ms-expand {
   -ms-user-select: none;
   pointer-events: none;
 }
+
+#app-game .diamond-bg {
+  width: 3000px;
+  filter: saturate(0) opacity(0.1);
+}

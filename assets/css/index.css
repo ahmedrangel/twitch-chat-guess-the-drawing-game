@@ -18,7 +18,7 @@ body {
 
 #login .diamond-bg {
   width: 3000px;
-  filter: saturate(0) opacity(0.04);
+  filter: saturate(0) opacity(0.06);
 }
 
 #login .diamond-index {

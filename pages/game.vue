@@ -3,6 +3,7 @@ definePageMeta({ middleware: "session" });
 </script>
 <template>
   <main id="app-game" class="my-2 centered-content">
+    <img class="diamond diamond-bg position-absolute top-50 start-50 translate-middle img-fluid" src="/images/diamond-guess-sq.svg">
     <!-- Modal Guessed -->
     <div id="modal-g" ref="modal_g" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
