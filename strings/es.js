@@ -17,6 +17,10 @@ export default {
   continue: "Continuar",
   no_one_guessed: "Nadie ha adivinado",
   try_again: "¡Vuelve a intentarlo!",
-  end_of_the_game: "Fin del juego",
+  game_over: "¡Juego terminado!",
   restart: "Reiniciar",
+  hide_this_box: "Oculte esta caja",
+  or: "o",
+  place_your_camera_here: "Coloque su cámara aquí",
+  before_you_start_the_game: "Antes de empezar el juego",
 };

@@ -17,6 +17,10 @@ export default {
   continue: "Continue",
   no_one_guessed: "No one guessed",
   try_again: "Try again!",
-  end_of_the_game: "End of the game",
+  game_over: "Game over!",
   restart: "Restart",
+  hide_this_box: "Hide this box",
+  or: "or",
+  place_your_camera_here: "Place your camera here",
+  before_you_start_the_game: "Before you start the game",
 };

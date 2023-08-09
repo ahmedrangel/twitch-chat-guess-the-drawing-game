@@ -69,6 +69,14 @@ definePageMeta({ middleware: "session" });
               </div>
             </div>
             <div id="board-tools" class="col text-center d-flex align-items-center justify-content-center p-3 position-relative">
+              <div v-if="!wordPicking && !gameStarted">
+                <div class="camera-text position-relative">
+                  <h2>{{ t("hide_this_box") }}</h2>
+                  <h2>{{ t("or") }} {{ t("place_your_camera_here") }}</h2>
+                  <h2>{{ t("before_you_start_the_game") }}</h2>
+                </div>
+                <Icon class="camera position-absolute top-50 start-50 translate-middle" name="ph:camera-duotone" />
+              </div>
               <div v-if="wordPicking" id="picker">
                 <h2>{{ t("choose_a_word") }}</h2>
                 <div v-for="(w, index) of randomObjects" :key="index" class="btn d-flex justify-content-center align-items-center my-3 py-3 px-5" @click="startGame(w)">
