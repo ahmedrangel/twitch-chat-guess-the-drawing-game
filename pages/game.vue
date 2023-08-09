@@ -305,7 +305,7 @@ export default {
       shift: false,
       z: false,
       toolMode: "pen",
-      lineSize: 14,
+      lineSize: 8,
       tmi: this.$nuxt.$tmi,
       loginClient: null,
       userClient: null,
@@ -443,6 +443,7 @@ export default {
       this.redoHistory = [];
       this.mode("clear");
       this.lineSize = 8;
+      this.ctx.lineWidth = this.lineSize;
       this.toolMode = "pen";
       this.color = "#000000";
       this.ctx.strokeStyle = this.color;
