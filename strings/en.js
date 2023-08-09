@@ -18,6 +18,7 @@ export default {
   no_one_guessed: "No one guessed",
   try_again: "Try again!",
   game_over: "Game over!",
+  scores_from_this_match: "Scores from this match",
   restart: "Restart",
   hide_this_box: "Hide this box",
   or: "or",

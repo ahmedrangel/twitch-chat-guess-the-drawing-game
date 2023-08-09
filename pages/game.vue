@@ -234,8 +234,9 @@ definePageMeta({ middleware: "session" });
                 </div>
               </div>
               <div v-if="gameFinished && !gameStarted" id="finished" class="row justify-content-center align-items-center">
+                <h1 class="mt-3 text-center text-dark game-over mb-0">{{ t("game_over") }}</h1>
                 <div class="finished-bg overflow-hidden position-relative text-center p-3 mt-3">
-                  <h1 class="mb-3">{{ t("end_of_the_game") }}</h1>
+                  <h2 class="mb-3">{{ t("scores_from_this_match") }}</h2>
                   <ol class="list-group list-group-numbered">
                     <li v-for="(chat, index) of ranking" :key="index < 5" class="h3 col-12 mb-0 list-group-item d-flex align-items-center p-0 ">
                       <div class="d-flex w-100 justify-content-between align-items-center">

@@ -18,6 +18,7 @@ export default {
   no_one_guessed: "Nadie ha adivinado",
   try_again: "¡Vuelve a intentarlo!",
   game_over: "¡Juego terminado!",
+  scores_from_this_match: "Puntuaciones de esta partida",
   restart: "Reiniciar",
   hide_this_box: "Oculte esta caja",
   or: "o",
