@@ -57,17 +57,6 @@ export const getGameObjects = () => {
   return objArray;
 };
 
-export const randomOptionsHandler = (type) => {
-  const objs = locale.getCategoryObjects();
-  let options;
-  if (type === "games") {
-    options = {
-      game: Object.keys(objs[type]["game_type"])[0],
-    };
-  }
-  return options;
-};
-
 export const getObjectLength = (type) => {
   const length = JSONPath({path: `$..[?(@.id=="${type}")]..words`, json: locale.getCategoryObjects()})[0];
   return Object.keys(length).length;

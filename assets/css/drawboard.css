@@ -416,3 +416,24 @@ select::-ms-expand {
 .camera-text {
   opacity: .8;
 }
+
+.diamond-canvas {
+  width: 400px;
+  filter: saturate(0) opacity(0.04);
+}
+
+#app-game img, #app-game svg {
+  user-drag: none; 
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  pointer-events: none;
+}
+
+body #app-game {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+}

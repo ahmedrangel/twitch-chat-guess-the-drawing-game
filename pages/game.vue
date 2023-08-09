@@ -2,7 +2,7 @@
 definePageMeta({ middleware: "session" });
 </script>
 <template>
-  <main class="my-2 centered-content">
+  <main id="app-game" class="my-2 centered-content">
     <!-- Modal Guessed -->
     <div id="modal-g" ref="modal_g" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
@@ -144,12 +144,13 @@ definePageMeta({ middleware: "session" });
             </div>
           </div>
         </div>
-        <div class="col-8 p-0 pb-4 bg-canvas">
+        <div class="col-8 p-0 pb-4 bg-canvas position-relative">
           <div id="canvas">
             <div :class="`top-info d-flex justify-content-end mt-3 ${wordPicking || gameStarted ? `visible` : `invisible`}`">
               <button class="btn" @click="stopGame()">
                 <Icon class="iconify" name="ph:x-bold" />
               </button>
+              <img v-if="gameStarted" class="diamond-canvas diamond position-absolute top-50 start-50 translate-middle" src="/images/diamond-guess-sq.svg">
             </div>
             <div v-if="wordPicking || gameStarted" :class="`top-info username position-absolute justify-content-start mt-3 d-flex`">
               <h2 class="m-0">{{ t("round") }}: {{ round }}/{{ choosenRound }}</h2>
@@ -157,7 +158,7 @@ definePageMeta({ middleware: "session" });
             <div v-if="!wordPicking || !gameStarted" :class="`top-info username position-absolute justify-content-center mt-3 d-flex`">
               <h2 class="m-0">{{ userClient.toUpperCase() }}</h2>
             </div>
-            <div :class="` canvas-box ${gameStarted ? `d-block` : `d-none`}`">
+            <div :class="` canvas-box position-relative ${gameStarted ? `d-block` : `d-none`}`">
               <canvas ref="canvas"
                       tabindex="0"
                       class="paint-canvas"
@@ -174,7 +175,8 @@ definePageMeta({ middleware: "session" });
               />
             </div>
             <div :class="`justify-content-center align-content-center ${!gameStarted && wordPicking ? `picking` : null } ${!gameStarted && wordPicking || !gameStarted && !wordPicking ? `d-block` : `d-none`}`">
-              <div v-if="!wordPicking && !gameFinished" id="start" class="row justify-content-center align-content-center">
+              <img class="diamond-canvas diamond position-absolute top-50 start-50 translate-middle" src="/images/diamond-guess-sq.svg">
+              <div v-if="!wordPicking && !gameFinished" id="start" class="row justify-content-center align-content-center position-relative">
                 <div class="col-12 w-75">
                   <div class="mb-5">
                     <div class="d-flex align-items-center mb-2">
@@ -417,13 +419,12 @@ export default {
       this.randomize();
     },
     randomize () {
-      const options = randomOptionsHandler(this.choosenCategory, this.choosenGame);
       const length = this.choosenCategory == "games" ? getObjectLength(this.choosenGame) : getObjectLength(this.choosenCategory);
-      const random1 = locale.getRandomObject(this.choosenCategory, options);
+      const random1 = locale.getRandomObject(this.choosenCategory, {game: this.choosenGame});
       let random2;
       if (length > 1) {
         do {
-          random2 = locale.getRandomObject(this.choosenCategory, options);
+          random2 = locale.getRandomObject(this.choosenCategory, {game: this.choosenGame});
         } while (random1 === random2);
         this.randomObjects = [random1, random2];
       } else {
@@ -591,7 +592,6 @@ export default {
       this.wordPicking = true;
       this.gameStarted = false;
       if (this.round > this.choosenRound) {
-        console.log(this.finalRanking);
         this.gameFinished = true;
         this.gameStarted = false;
         this.stopGame();

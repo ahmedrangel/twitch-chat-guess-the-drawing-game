@@ -15,7 +15,7 @@ export default {
   choose_a_word: "Elige una palabra",
   guessed_it: "¡Ha adivinado!",
   continue: "Continuar",
-  no_one_guessed: "Nadie ha adivinado",
+  no_one_guessed: "Nadie adivinó",
   try_again: "¡Vuelve a intentarlo!",
   game_over: "¡Juego terminado!",
   scores_from_this_match: "Puntuaciones de esta partida",
