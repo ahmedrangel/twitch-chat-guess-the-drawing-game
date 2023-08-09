@@ -2,7 +2,7 @@
 definePageMeta({ middleware: "session" });
 </script>
 <template>
-  <main id="app-game" class="my-2 centered-content">
+  <main id="app-game" class="centered-content">
     <img class="diamond diamond-bg position-absolute top-50 start-50 translate-middle img-fluid" src="/images/diamond-guess-sq.svg">
     <!-- Modal Guessed -->
     <div id="modal-g" ref="modal_g" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -230,7 +230,12 @@ definePageMeta({ middleware: "session" });
                     </select>
                   </div>
                 </div>
-                <div class="col-12 d-flex justify-content-center align-items-center mt-5">
+                <div clas="col-12">
+                  <div class="d-flex justify-content-center align-items-center mt-4">
+                    <GrowSpinner /><h5 class="ms-3 mb-0">{{ capitalizeFirstLetter(t("waiting_for_the_streamer_to_start_the_game")) }}</h5>
+                  </div>
+                </div>
+                <div class="col-12 d-flex justify-content-center align-items-center mt-4">
                   <button class="btn d-flex justify-content-center align-items-center mx-5 py-3 text-white logout" @click="logout()">
                     <Icon class="iconify me-3" name="tabler:logout-2" />
                     <span class="">{{ t("logout") }}</span>

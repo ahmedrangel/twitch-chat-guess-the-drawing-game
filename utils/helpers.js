@@ -75,3 +75,8 @@ export const timeLeft = (s) => {
 export const percentage = (val, total) => {
   return ((val * 100) / total).toFixed(2);
 };
+
+export const capitalizeFirstLetter = (string) => {
+  string = string.toLowerCase();
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}

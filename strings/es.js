@@ -24,4 +24,6 @@ export default {
   or: "o",
   place_your_camera_here: "Coloque su cámara aquí",
   before_you_start_the_game: "Antes de empezar el juego",
+  waiting_for_the_streamer_to_start_the_game: "Esperando a que el streamer inicie el juego..."
+
 };
