@@ -22,7 +22,7 @@ body {
 }
 
 #login .diamond-index {
-  width: 40px;
+  width: 46px;
 }
 
 #login img, #login svg {
@@ -38,5 +38,36 @@ body {
 #login .drawmond {
   -webkit-text-stroke: 2px var(--color-black);
   -webkit-text-fill-color: var(--white);
-  font-size: 4rem;
+  font-size: 4.6rem;
+}
+
+#login .join {
+  width: 50%;
+  margin: auto;
+}
+
+@media only screen and (max-width: 767px) {
+  #login .diamond-index {
+    width: 26px;
+  }
+  #login .drawmond {
+    -webkit-text-stroke: 1px var(--color-black);
+    font-size: 2.6rem;
+  }
+  #login .drawmond-desc {
+    font-size: 1rem;
+  }
+  #login .join {
+    width: 60%;
+  }
+  #login h2 {
+    font-size: 1.2rem;
+  }
+  
+}
+
+@media only screen and (max-width: 512px) {
+  #login .join {
+    width: 100%;
+  }
 }
