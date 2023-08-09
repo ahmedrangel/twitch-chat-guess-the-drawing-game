@@ -431,9 +431,3 @@ select::-ms-expand {
   -ms-user-select: none;
   pointer-events: none;
 }
-
-body #app-game {
-  -webkit-user-select: none; /* Safari */
-  -ms-user-select: none; /* IE 10 and IE 11 */
-  user-select: none; /* Standard syntax */
-}

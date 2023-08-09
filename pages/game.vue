@@ -584,6 +584,8 @@ export default {
     continueNext() {
       this.$nuxt.$bootstrap.hideModal("modal_g");
       this.$nuxt.$bootstrap.hideModal("modal_n");
+      this.undoHistory = [];
+      this.redoHistory = [];
       this.is_guessed = false;
       this.timer = this.choosenTimer * 1000;
       this.randomize();
