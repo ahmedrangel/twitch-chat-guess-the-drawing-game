@@ -12,6 +12,7 @@ useSeoMeta({
   ogTitle: seoTitle,
   ogDescription: seoDescription,
   ogUrl: seoUrl,
+  ogImage: seoUrl + "/images/drawmond.png"
   // Twitter
   twitterCard: "summary",
   twitterTitle: seoTitle,
