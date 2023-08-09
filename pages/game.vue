@@ -238,7 +238,7 @@ definePageMeta({ middleware: "session" });
                 <div class="finished-bg overflow-hidden position-relative text-center p-3 mt-3">
                   <h2 class="mb-3">{{ t("scores_from_this_match") }}</h2>
                   <ol class="list-group list-group-numbered">
-                    <li v-for="(chat, index) of ranking" :key="index < 5" class="h3 col-12 mb-0 list-group-item d-flex align-items-center p-0 ">
+                    <li v-for="(chat, index) of finalRanking" :key="index < 10" class="h3 col-12 mb-0 list-group-item d-flex align-items-center p-0 ">
                       <div class="d-flex w-100 justify-content-between align-items-center">
                         <h2 class="chat-names ms-2 mb-0">{{ chat.display_name }}</h2>
                         <div class="d-flex justify-content-center align-self-center finished-score">
@@ -315,6 +315,7 @@ export default {
       randomObjects: [],
       guessWord: null,
       guessers: [],
+      guessersMatch: [],
       round: 1,
       whoGuessed: null,
       imagePng: null,
@@ -328,7 +329,7 @@ export default {
       return this.guessers.sort((a, b) => parseInt(b.score) - parseInt(a.score));
     },
     finalRanking () {
-      return this.guessers.sort((a, b) => parseInt(b.score) - parseInt(a.score)).slice(0, 12);
+      return this.guessersMatch.sort((a, b) => parseInt(b.score) - parseInt(a.score));
     }
   },
   watch: {
@@ -376,11 +377,17 @@ export default {
         this.is_guessed = true;
         this.whoGuessed = display_name.toUpperCase();
         const newGuesser = {display_name: display_name, score: Math.round(parseInt(this.timer) / 1000)};
-        const index = this.guessers.findIndex(item => item.display_name === newGuesser.display_name);
-        if (index !== -1) {
-          this.guessers[index].score += newGuesser.score;
+        const indexTotal = this.guessers.findIndex(item => item.display_name === newGuesser.display_name);
+        const indexMatch = this.guessersMatch.findIndex(item => item.display_name === newGuesser.display_name);
+        if (indexTotal !== -1) {
+          this.guessers[indexTotal].score += newGuesser.score;
         } else {
           this.guessers.push({display_name: display_name, score: Math.round(parseInt(this.timer) / 1000)});
+        }
+        if (indexMatch !== -1) {
+          this.guessersMatch[indexMatch].score += newGuesser.score;
+        } else {
+          this.guessersMatch.push({display_name: display_name, score: Math.round(parseInt(this.timer) / 1000)});
         }
         this.imagePng = this.$refs.canvas.toDataURL("image/png");
         this.$nuxt.$bootstrap.showModal(this.$refs.modal_g);
@@ -439,6 +446,7 @@ export default {
       this.timer = 0;
     },
     restartGame() {
+      this.guessersMatch = [];
       this.gameFinished = null;
     },
     getStrokeColor(event) {
@@ -583,6 +591,7 @@ export default {
       this.wordPicking = true;
       this.gameStarted = false;
       if (this.round > this.choosenRound) {
+        console.log(this.finalRanking);
         this.gameFinished = true;
         this.gameStarted = false;
         this.stopGame();
