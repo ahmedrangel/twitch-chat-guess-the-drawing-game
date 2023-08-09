@@ -58,7 +58,7 @@ export default {
       needle_and_thread: "Hilo y aguja",
       pen: "Bolígrafo",
       feather: "Pluma",
-      eraser: "Goma de borrar",
+      eraser: "Borrador",
       tape: "Cinta adhesiva",
       ruler: "Regla",
       palette: "Paleta",

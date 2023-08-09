@@ -34,7 +34,7 @@ class Locale {
 
   }
 
-  setLanguage (code = "en") {
+  setLanguage (code = "es") {
     this.code = String(code).toLowerCase();
   }
 
@@ -43,7 +43,7 @@ class Locale {
   }
 }
 
-export const locale = new Locale("en");
+export const locale = new Locale("es");
 
 export const t = (key) => {
   return locale.get(key).toUpperCase();

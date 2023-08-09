@@ -17,4 +17,6 @@ export default {
   continue: "Continuar",
   no_one_guessed: "Nadie ha adivinado",
   try_again: "¡Vuelve a intentarlo!",
+  end_of_the_game: "Fin del juego",
+  restart: "Reiniciar",
 };

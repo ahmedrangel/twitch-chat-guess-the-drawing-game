@@ -9,9 +9,13 @@ definePageMeta({ middleware: "session" });
         <div class="modal-content">
           <div class="modal-body text-center py-4">
             <h1 class="whoguessed text-break">{{ whoGuessed }}</h1>
-            <h2 class="m-0">{{ t("guessed_it") }}</h2>
+            <div class="d-flex align-items-center justify-content-center">
+              <img class="diamond-guess diamond" src="/images/diamond-guess-sq.svg">
+              <h2 class="my-0 mx-4">{{ t("guessed_it") }}</h2>
+              <img class="diamond-guess diamond" src="/images/diamond-guess-sq.svg">
+            </div>
             <h3 class="fst-italic mt-4">{{ guessWord }}</h3>
-            <img class="img-fluid my-4" :src="imagePng">
+            <img class="draw img-fluid my-4" :src="imagePng">
             <button type="button" class="btn mt-4 py-2" data-bs-dismiss="modal" @click="continueNext()">
               <div class="d-flex align-items-center justify-content-center">
                 <h2 class="m-0">{{ t("continue") }}<Icon class="ms-2 iconify" name="ph:caret-double-right-bold" /></h2>
@@ -29,7 +33,7 @@ definePageMeta({ middleware: "session" });
             <h1 class="whoguessed no-one-guessed text-break">{{ t("no_one_guessed") }} :(</h1>
             <h2 class="m-0">{{ t("try_again") }}</h2>
             <h3 class="fst-italic mt-4">{{ guessWord }}</h3>
-            <img class="img-fluid my-4" :src="imagePng">
+            <img class="draw img-fluid my-4" :src="imagePng">
             <button type="button" class="btn mt-4 py-2" data-bs-dismiss="modal" @click="continueNext()">
               <div class="d-flex align-items-center justify-content-center">
                 <h2 class="m-0">{{ t("continue") }}<Icon class="ms-2 iconify" name="ph:caret-double-right-bold" /></h2>
@@ -43,25 +47,37 @@ definePageMeta({ middleware: "session" });
       <div class="row row-cols-2 g-4">
         <div class="col-4">
           <div class="row row-cols-1 g-0">
-            <div id="chat-scores" class="col d-flex p-3">
-              <div class="chat overflow-hidden d-flex justify-content-end flex-column">
-                <div v-for="(chat, index) of comment" :key="index < 5" class="col-12 mb-0">
+            <div id="chat-scores" class="col d-flex-inline p-3 position-relative">
+              <img class="position-absolute top-0 start-0 opacity-25" src="/images/grid-scores.png">
+              <div class="chat overflow-hidden d-flex justify-content-start flex-column position-relative">
+                <div v-for="(chat, index) of ranking" :key="index < 5" class="col-12 mb-0 d-flex align-items-center justify-content-between">
                   <span class="chat-names">{{ chat.display_name }}</span>
+                  <div class="d-flex align-items-center position-absolute end-0 score">
+                    <img class="diamond-icon diamond me-1" src="/images/diamond-guess-sq.svg">
+                    <span class="chat-names">{{ chat.score }}</span>
+                  </div>
                 </div>
               </div>
             </div>
             <div id="twitch-chat" class="col d-flex p-3">
               <div class="chat overflow-hidden d-flex justify-content-end flex-column">
-                <div v-for="(chat, index) of comment" :key="index" class="col-12 mb-0">
-                  <span class="chat-names">{{ chat.display_name }}:</span> <span class="chat-messages">{{ chat.message }}</span>
+                <div v-for="(chat, index) of comment" :key="index" :class="`col-12 mb-0 ${chat.guessed ? `text-dark` : `text-secondary`}`">
+                  <img v-if="chat.guessed" class="diamond-icon diamond me-1 align-text-top" src="/images/diamond-guess-sq.svg">
+                  <Icon v-else class="iconify me-1 align-text-top" name="ic:twotone-chat-bubble" />
+                  <span class="chat-names me-1">{{ chat.display_name }}:</span><span class="chat-messages">{{ chat.message }}</span>
                 </div>
               </div>
             </div>
-            <div id="board-tools" class="col text-center d-flex align-items-center justify-content-center p-3">
+            <div id="board-tools" class="col text-center d-flex align-items-center justify-content-center p-3 position-relative">
               <div v-if="wordPicking" id="picker">
                 <h2>{{ t("choose_a_word") }}</h2>
                 <div v-for="(w, index) of randomObjects" :key="index" class="btn d-flex justify-content-center align-items-center my-3 py-3 px-5" @click="startGame(w)">
                   <h2 class="m-0">{{ w }}</h2>
+                </div>
+                <div class="d-flex align-items-center justify-content-center">
+                  <div class="re-randomize btn" @click="randomize()">
+                    <Icon class="iconify" name="ph:arrow-clockwise-bold" />
+                  </div>
                 </div>
               </div>
               <div v-else-if="gameStarted">
@@ -150,7 +166,7 @@ definePageMeta({ middleware: "session" });
               />
             </div>
             <div :class="`justify-content-center align-content-center ${!gameStarted && wordPicking ? `picking` : null } ${!gameStarted && wordPicking || !gameStarted && !wordPicking ? `d-block` : `d-none`}`">
-              <div v-if="!wordPicking" id="start" class="row justify-content-center align-content-center">
+              <div v-if="!wordPicking && !gameFinished" id="start" class="row justify-content-center align-content-center">
                 <div class="col-12 w-75">
                   <div class="mb-5">
                     <div class="d-flex align-items-center mb-2">
@@ -158,8 +174,8 @@ definePageMeta({ middleware: "session" });
                       <span class=" h3 m-0">{{ t("language") }}</span>
                     </div>
                     <select v-model="lang">
-                      <option value="en">{{ t("english") }}</option>
                       <option value="es">{{ t("spanish") }}</option>
+                      <option value="en">{{ t("english") }}</option>
                     </select>
                   </div>
                   <div class="my-5 d-flex">
@@ -209,9 +225,33 @@ definePageMeta({ middleware: "session" });
                   </button>
                 </div>
               </div>
+              <div v-if="gameFinished && !gameStarted" id="finished" class="row justify-content-center align-items-center">
+                <div class="finished-bg overflow-hidden position-relative text-center p-3 mt-3">
+                  <h1 class="mb-3">{{ t("end_of_the_game") }}</h1>
+                  <ol class="list-group list-group-numbered">
+                    <li v-for="(chat, index) of ranking" :key="index < 5" class="h3 col-12 mb-0 list-group-item d-flex align-items-center p-0 ">
+                      <div class="d-flex w-100 justify-content-between align-items-center">
+                        <h2 class="chat-names ms-2 mb-0">{{ chat.display_name }}</h2>
+                        <div class="d-flex justify-content-center align-self-center finished-score">
+                          <img class="diamond-icon diamond me-1" src="/images/diamond-guess-sq.svg">
+                          <span class="chat-names">{{ chat.score }}</span>
+                        </div>
+                      </div>
+                    </li>
+                  </ol>
+                </div>
+                <div id="restart" class="d-flex justify-content-center align-self-center mb-3">
+                  <button type="button" class="btn py-2 px-5" @click="restartGame()">
+                    <div class="d-flex align-items-center justify-content-center">
+                      <h2 class="m-0">{{ t("reiniciar") }}</h2>
+                      <Icon class="ms-2 iconify h2 m-0" name="ph:arrow-u-up-left-duotone" />
+                    </div>
+                  </button>
+                </div>
+              </div>
             </div>
             <div id="progress" class="w-100">
-              <div class="d-flex px-5 d-flex justify-content-center align-items-center">
+              <div class="d-flex px-4 d-flex justify-content-center align-items-center">
                 <div class="d-flex justify-content-center align-items-center">
                   <Icon class="iconify h2 me-2 my-0" name="ph:alarm-duotone" />
                   <h4 class="me-2 mb-0 countdown-timer">{{ timeLeft(timer) }}</h4>
@@ -231,7 +271,7 @@ definePageMeta({ middleware: "session" });
 export default {
   data() {
     return {
-      lang: "en",
+      lang: "es",
       categories: null,
       timers: [30, 60, 90, 120],
       rounds: [5, 10, 15, 20],
@@ -270,9 +310,17 @@ export default {
       whoGuessed: null,
       imagePng: null,
       timer: 0,
-      gameFinished: true,
+      gameFinished: null,
       is_guessed: false,
     };
+  },
+  computed: {
+    ranking () {
+      return this.guessers.sort((a, b) => parseInt(b.score) - parseInt(a.score));
+    },
+    finalRanking () {
+      return this.guessers.sort((a, b) => parseInt(b.score) - parseInt(a.score)).slice(0, 12);
+    }
   },
   watch: {
     lang (val) {
@@ -306,21 +354,29 @@ export default {
     window.addEventListener("resize", () => adjustScale(document));
     this.client = new this.tmi.Client({
       connection: { secure: true, reconnect: true },
-      channels: [this.userClient, "husher_x", "ahmed_r"], // Twitch Channel
+      channels: [this.userClient], // Twitch Channel
     });
     this.client.connect();
     this.client.on("message", (channel, tags, message) => {
       const display_name = tags["display-name"];
       this.comment.length >= this.chat_limit ? this.comment.shift() : null;
-      this.comment.push({display_name: display_name, message: message});
-      if (!this.is_guessed && removeDiacritics(message).toLowerCase() === removeDiacritics(this.guessWord).toLowerCase() &&
+      if (!this.is_guessed && this.guessWord !== null &&
+          removeDiacritics(message).toLowerCase() === removeDiacritics(this.guessWord).toLowerCase() &&
           this.round <= this.choosenRound) {
+        this.comment.push({display_name: display_name, message: message, guessed: true});
         this.is_guessed = true;
-        console.log(display_name + " adivinó la palabra: " + this.guessWord);
         this.whoGuessed = display_name.toUpperCase();
-        this.guessers.push({display_name: display_name, score: 100});
+        const newGuesser = {display_name: display_name, score: Math.round(parseInt(this.timer) / 1000)};
+        const index = this.guessers.findIndex(item => item.display_name === newGuesser.display_name);
+        if (index !== -1) {
+          this.guessers[index].score += newGuesser.score;
+        } else {
+          this.guessers.push({display_name: display_name, score: Math.round(parseInt(this.timer) / 1000)});
+        }
         this.imagePng = this.$refs.canvas.toDataURL("image/png");
         this.$nuxt.$bootstrap.showModal(this.$refs.modal_g);
+      } else {
+        this.comment.push({display_name: display_name, message: message, guessed: false});
       }
     });
     this.drawingBoard();
@@ -336,6 +392,7 @@ export default {
       this.gameStarted = true;
       this.wordPicking = false;
       this.guessWord = word;
+      this.gameFinished = false;
       this.countdown();
     },
     pickWord() {
@@ -372,9 +429,8 @@ export default {
       this.whoGuessed = null;
       this.timer = 0;
     },
-    cancelGame() {
-      this.stopGame();
-      this.gameFinished = true;
+    restartGame() {
+      this.gameFinished = null;
     },
     getStrokeColor(event) {
       this.color = event.target.value;
@@ -508,6 +564,8 @@ export default {
       this.ctx.lineWidth = this.lineSize;
     },
     continueNext() {
+      this.$nuxt.$bootstrap.hideModal("modal_g");
+      this.$nuxt.$bootstrap.hideModal("modal_n");
       this.is_guessed = false;
       this.timer = this.choosenTimer * 1000;
       this.randomize();
@@ -516,13 +574,14 @@ export default {
       this.wordPicking = true;
       this.gameStarted = false;
       if (this.round > this.choosenRound) {
+        this.gameFinished = true;
+        this.gameStarted = false;
         this.stopGame();
       }
     },
     countdown () {
       this.timer = this.choosenTimer * 1000;
       const interval = setInterval(() => {
-        console.log(this.is_guessed);
         if (parseInt(this.timer) <= 0 && !this.is_guessed && this.gameStarted) {
           clearInterval(interval);
           this.imagePng = this.$refs.canvas.toDataURL("image/png");
