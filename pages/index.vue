@@ -1,5 +1,22 @@
 <script setup>
 const { loggedIn } = useUserSession();
+const seoDescription = "Challenge and play with your audience to guess your drawings.";
+const seoTitle = "Drawmond";
+const seoUrl = "https://drawmond.ahmedrangel.com/";
+useSeoMeta({
+  title: seoTitle,
+  description: seoDescription,
+  keywords: "drawmond, drawing, streamer, game, chat, twitch, guessing, draw, sketch",
+  // Open Graph
+  ogType: "website",
+  ogTitle: seoTitle,
+  ogDescription: seoDescription,
+  ogUrl: seoUrl,
+  // Twitter
+  twitterCard: "summary",
+  twitterTitle: seoTitle,
+  twitterDescription: seoDescription
+});
 </script>
 <template>
   <main id="login">
