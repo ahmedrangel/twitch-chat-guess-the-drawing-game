@@ -90,7 +90,7 @@ definePageMeta({ middleware: "session" });
               </div>
               <div v-else-if="gameStarted">
                 <div id="guess" class="mt-2 mb-3">
-                  <h5 class="m-0">{{ t("draw_this_word") }}</h5>
+                  <h5 class="mb-2">{{ t("draw_this_word") }}</h5>
                   <h3 class="m-0 guess-word">{{ guessWord }}</h3>
                 </div>
                 <div id="tools" class="my-2">
@@ -112,6 +112,11 @@ definePageMeta({ middleware: "session" });
                   <button :class="`btn mx-1 ${toolMode === `bucket` ? `btn-active` : ``}`" @click="mode(`bucket`)">
                     <span class="m-0 h3 d-flex align-items-center justify-content-center">
                       <Icon class="iconify" name="ph:paint-bucket-duotone" />
+                    </span>
+                  </button>
+                  <button :class="`btn mx-1 ${toolMode === `eyedroper` ? `btn-active` : ``}`" @click="eyedropper()">
+                    <span class="m-0 h3 d-flex align-items-center justify-content-center">
+                      <Icon class="iconify" name="ph:eyedropper-duotone" />
                     </span>
                   </button>
                   <button class="btn mx-1" @click="mode(`clear`)">
@@ -437,7 +442,7 @@ export default {
       this.undoHistory = [];
       this.redoHistory = [];
       this.mode("clear");
-      this.lineSize = 14;
+      this.lineSize = 8;
       this.toolMode = "pen";
       this.color = "#000000";
       this.ctx.strokeStyle = this.color;
@@ -612,6 +617,15 @@ export default {
           this.timer = this.timer - 100;
         }
       }, 100);
+    },
+    eyedropper() {
+      const eyeDropper = new EyeDropper();
+      eyeDropper
+        .open()
+        .then((result) => {
+          this.color = result.sRGBHex;
+          this.ctx.strokeStyle = this.color;
+        });
     }
   },
 };
