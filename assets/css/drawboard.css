@@ -78,8 +78,8 @@ canvas, .canvas-box, #start, .picking, #finished {
   border-radius: 20px;
 }
 canvas {
-  height: 780px;
-  width: 1134px;
+  height: 778px;
+  width: 1131px;
 }
 
 #twitch-chat {

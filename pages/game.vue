@@ -167,7 +167,7 @@ definePageMeta({ middleware: "session" });
             </div>
           </div>
         </div>
-        <!-- Right Column --> 
+        <!-- Right Column -->
         <div class="col-8 p-0 pb-4 bg-canvas position-relative">
           <div id="canvas">
             <div :class="`top-info d-flex justify-content-end mt-3 ${wordPicking || gameStarted ? `visible` : `invisible`}`">
@@ -186,8 +186,8 @@ definePageMeta({ middleware: "session" });
               <canvas ref="canvas"
                       tabindex="0"
                       class="paint-canvas"
-                      width="1134"
-                      height="822"
+                      width="1131"
+                      height="778"
                       @mousedown="startDrawing($event, `mouse`)"
                       @mousemove="drawLine($event, `mouse`)"
                       @mouseup="stopDrawing($event, `touch`)"
