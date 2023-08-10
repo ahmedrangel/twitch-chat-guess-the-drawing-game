@@ -620,6 +620,7 @@ export default {
       this.ctx.lineWidth = this.lineSize;
     },
     continueNext() {
+      this.guessWord = null;
       this.$nuxt.$bootstrap.hideModal("modal_g");
       this.$nuxt.$bootstrap.hideModal("modal_n");
       this.undoHistory = [];
