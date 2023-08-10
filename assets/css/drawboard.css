@@ -459,7 +459,7 @@ select::-ms-expand {
   border-bottom: none;
   border-top: none;
   border-right: none;
-  border-radius: 0 6px 6px 0;
+  border-radius: 0;
 }
 
 #write-word .custom-input {
