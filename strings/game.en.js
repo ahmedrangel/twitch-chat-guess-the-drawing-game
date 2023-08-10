@@ -325,7 +325,7 @@ export default {
   },
   games: {
     id: "games",
-    title: "Video game characters",
+    title: "Video games",
     game_type: {
       lol: {
         id: "lol",
@@ -491,6 +491,52 @@ export default {
           zilean: "Zilean",
           zoe: "Zoe",
           zyra: "Zyra"
+        }
+      },
+      valorant: {
+        id: "valorant",
+        game_name: "Valorant",
+        words: {
+          astra: "Astra",
+          breach: "Breach",
+          brimstone: "Brimstone",
+          chamber: "Chamber",
+          cypher: "Cypher",
+          deadlock: "Deadlock",
+          fade: "Fade",
+          gekko: "Gekko",
+          harbor: "Harbor",
+          jett: "Jett",
+          kayo: "Kayo",
+          killjoy: "Killjoy",
+          neon: "Neon",
+          omen: "Omen",
+          phoenix: "Phoenix",
+          raze: "Raze",
+          reyna: "Reyna",
+          sage: "Sage",
+          skye: "Skye",
+          sova: "Sova",
+          viper: "Viper",
+          yoru: "Yoru",
+          classic: "Classic",
+          ghost: "Ghost",
+          shorty: "Shorty",
+          frenzy: "Frenzy",
+          sheriff: "Sheriff",
+          stinger: "Stinger",
+          spectre: "Spectre",
+          bucky: "Bucky",
+          judge: "Judge",
+          bulldog: "Bulldog",
+          guardian: "Guardian",
+          phantom: "Phantom",
+          vandal: "Vandal",
+          marshal: "Marshal",
+          operator: "Operator",
+          ares: "Ares",
+          odin: "Odin",
+          knife: "Knife",
         }
       }
     }

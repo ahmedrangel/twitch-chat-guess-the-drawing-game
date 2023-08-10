@@ -325,7 +325,7 @@ export default {
   },
   games: {
     id: "games",
-    title: "Personajes de videojuegos",
+    title: "Videojuegos",
     game_type: {
       lol: {
         id: "lol",
@@ -518,7 +518,25 @@ export default {
           skye: "Skye",
           sova: "Sova",
           viper: "Viper",
-          yoru: "Yoru"
+          yoru: "Yoru",
+          classic: "Classic",
+          ghost: "Ghost",
+          shorty: "Shorty",
+          frenzy: "Frenzy",
+          sheriff: "Sheriff",
+          stinger: "Stinger",
+          spectre: "Spectre",
+          bucky: "Bucky",
+          judge: "Judge",
+          bulldog: "Bulldog",
+          guardian: "Guardian",
+          phantom: "Phantom",
+          vandal: "Vandal",
+          marshal: "Marshal",
+          operator: "Operator",
+          ares: "Ares",
+          odin: "Odin",
+          knife: "Cuchillo",
         }
       }
     }
