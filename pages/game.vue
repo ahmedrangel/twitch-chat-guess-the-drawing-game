@@ -46,8 +46,10 @@ definePageMeta({ middleware: "session" });
     </div>
     <div id="game" @keydown="keydown" @keyup="keyup">
       <div class="row row-cols-2 g-4">
+        <!-- Left Column -->
         <div class="col-4">
           <div class="row row-cols-1 g-0">
+            <!-- Scores -->
             <div id="chat-scores" class="col d-flex-inline p-3 position-relative">
               <img class="position-absolute top-0 start-0 opacity-25" src="/images/grid-scores.png">
               <div class="chat overflow-hidden d-flex justify-content-start flex-column position-relative">
@@ -60,6 +62,7 @@ definePageMeta({ middleware: "session" });
                 </div>
               </div>
             </div>
+            <!-- Chat -->
             <div id="twitch-chat" class="col d-flex p-3">
               <div class="chat overflow-hidden d-flex justify-content-end flex-column">
                 <div v-for="(chat, index) of comment" :key="index" :class="`col-12 mb-0 ${chat.guessed ? `text-dark` : `text-secondary`}`">
@@ -69,6 +72,7 @@ definePageMeta({ middleware: "session" });
                 </div>
               </div>
             </div>
+            <!-- Tools -->
             <div id="board-tools" class="col text-center d-flex align-items-center justify-content-center p-3 position-relative">
               <div v-if="!wordPicking && !gameStarted">
                 <div class="camera-text position-relative">
@@ -79,14 +83,27 @@ definePageMeta({ middleware: "session" });
                 <Icon class="camera position-absolute top-50 start-50 translate-middle" name="ph:camera-duotone" />
               </div>
               <div v-if="wordPicking" id="picker">
-                <h2>{{ t("choose_a_word") }}</h2>
-                <div v-for="(w, index) of randomObjects" :key="index" class="btn d-flex justify-content-center align-items-center my-3 py-3 px-5" @click="startGame(w)">
-                  <h2 class="m-0">{{ w }}</h2>
-                </div>
-                <div class="d-flex align-items-center justify-content-center">
-                  <div class="re-randomize btn" @click="randomize()">
-                    <Icon class="iconify" name="ph:arrow-clockwise-bold" />
+                <div v-if="!customCategory">
+                  <h2>{{ t("choose_a_word") }}</h2>
+                  <div v-for="(w, index) of randomObjects" :key="index" class="btn d-flex justify-content-center align-items-center my-3 py-3 px-5" @click="startGame(w)">
+                    <h2 class="m-0">{{ w }}</h2>
                   </div>
+                  <div class="d-flex align-items-center justify-content-center">
+                    <div class="re-randomize btn" @click="randomize()">
+                      <Icon class="iconify" name="ph:arrow-clockwise-bold" />
+                    </div>
+                  </div>
+                </div>
+                <div v-else>
+                  <form id="write-word" @submit.prevent="startGame(customWord)">
+                    <label class="h2 mb-4">{{ t("write_a_word") }}</label>
+                    <div class="d-flex custom-input">
+                      <input v-model="customWord" class="form-control form-control-lg" type="text" :placeholder="t(`word`)" :aria-label="t(`write_a_word`)" required>
+                      <button class=" btn">
+                        <Icon class="iconify" name="ph:play-fill" />
+                      </button>
+                    </div>
+                  </form>
                 </div>
               </div>
               <div v-else-if="gameStarted">
@@ -150,6 +167,7 @@ definePageMeta({ middleware: "session" });
             </div>
           </div>
         </div>
+        <!-- Right Column --> 
         <div class="col-8 p-0 pb-4 bg-canvas position-relative">
           <div id="canvas">
             <div :class="`top-info d-flex justify-content-end mt-3 ${wordPicking || gameStarted ? `visible` : `invisible`}`">
@@ -202,10 +220,11 @@ definePageMeta({ middleware: "session" });
                       </div>
                       <select v-model="choosenCategory">
                         <option v-for="(c, index) of categories" :key="index" :value="c.type">{{ c.title }}</option>
+                        <option value="custom">{{ t("custom") }}</option>
                       </select>
                     </div>
                     <div v-if="choosenCategory ==`games`" class="col-5">
-                      <h3 class="">{{ t("videogames") }}</h3>
+                      <h3 class="">{{ t("videogame") }}</h3>
                       <select v-model="choosenGame">
                         <option v-for="(g, index) of getGameObjects()" :key="index" :value="g.type">{{ g.game_name }}</option>
                       </select>
@@ -295,7 +314,7 @@ export default {
     return {
       lang: "es",
       categories: null,
-      timers: [30, 60, 90, 120],
+      timers: [60, 90, 120, 150, 180],
       rounds: [5, 10, 15, 20],
       client: null,
       chat_limit: 9,
@@ -335,6 +354,8 @@ export default {
       timer: 0,
       gameFinished: null,
       is_guessed: false,
+      customCategory: false,
+      customWord: "",
     };
   },
   computed: {
@@ -427,7 +448,11 @@ export default {
     pickWord() {
       this.wordPicking = true;
       this.timer = this.choosenTimer * 1000;
-      this.randomize();
+      if (this.choosenCategory !== "custom") {
+        this.randomize();
+      } else {
+        this.customCategory = true;
+      }
     },
     randomize () {
       const length = this.choosenCategory == "games" ? getObjectLength(this.choosenGame) : getObjectLength(this.choosenCategory);
@@ -457,6 +482,7 @@ export default {
       this.round = 1;
       this.whoGuessed = null;
       this.timer = 0;
+      this.customCategory = false;
     },
     restartGame() {
       this.guessersMatch = [];
@@ -600,7 +626,7 @@ export default {
       this.redoHistory = [];
       this.is_guessed = false;
       this.timer = this.choosenTimer * 1000;
-      this.randomize();
+      !this.customCategory ? this.randomize() : this.customWord = "";
       this.round++;
       this.mode("clear");
       this.wordPicking = true;

@@ -440,3 +440,29 @@ select::-ms-expand {
   width: 3000px;
   filter: saturate(0) opacity(0.1);
 }
+
+#write-word label {
+  font-size: 2rem;
+}
+#write-word .form-control-lg {
+  padding: 1rem 1rem!important;
+  font-size: 1.8rem!important;
+  border: none;
+  border-radius: 6px 0 0 6px;
+  width: 300px;
+}
+
+#write-word .btn {
+  width: 100px;
+  font-size: 1.6rem;
+  border-left: 3px solid var(--color-black);
+  border-bottom: none;
+  border-top: none;
+  border-right: none;
+  border-radius: 0 6px 6px 0;
+}
+
+#write-word .custom-input {
+  border: 3px solid var(--color-black);
+  border-radius: 6px;
+}
