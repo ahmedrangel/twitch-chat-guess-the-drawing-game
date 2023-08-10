@@ -644,15 +644,19 @@ export default {
     },
     countdown () {
       this.timer = this.choosenTimer * 1000;
+      const now = new Date().getTime();
+      const endTime = new Date(now + this.timer).getTime();
       const interval = setInterval(() => {
-        if (parseInt(this.timer) <= 0 && !this.is_guessed && this.gameStarted) {
+        const now = new Date().getTime();
+        const distance = endTime - now;
+        if (distance <= 0 && !this.is_guessed && this.gameStarted) {
           clearInterval(interval);
           this.imagePng = this.$refs.canvas.toDataURL("image/png");
           this.$nuxt.$bootstrap.showModal(this.$refs.modal_n);
         } else if (parseInt(this.timer) > 0 && this.is_guessed || !this.gameStarted && !this.wordPicking) {
           clearInterval(interval);
         } else {
-          this.timer = this.timer - 100;
+          this.timer = distance;
         }
       }, 100);
     },
